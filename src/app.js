@@ -5,6 +5,7 @@ const morgan = require('morgan');
 
 const authRoutes = require('./routes/auth.routes');
 const categoryRoutes = require('./routes/category.routes');
+const productRoutes = require('./routes/product.route');
 
 const app = express();
 
@@ -19,9 +20,10 @@ app.use(helmet());
 app.use(morgan('dev'));
 app.use(express.json());
 
-// Auth routes
+// routes
 app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
+app.use('/api/products', productRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {
