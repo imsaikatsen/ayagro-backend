@@ -26,11 +26,10 @@ class ProductService {
       throw new ApiError(404, 'Product not found');
     }
 
-    //  Delete old image if new image is uploaded
+    // Delete old image if new image is uploaded
     if (updateData.productImage && existing.productImage) {
       const imagePath = path.join(
         __dirname,
-        '..',
         '..',
         'uploads',
         'products',
@@ -59,7 +58,6 @@ class ProductService {
     if (existing.productImage) {
       const imagePath = path.join(
         __dirname,
-        '..',
         '..',
         'uploads',
         'products',

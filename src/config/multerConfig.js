@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 
 // Directory to save uploaded files
-const uploadDir = 'uploads/products';
+const uploadDir = 'src/uploads/products';
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -11,9 +11,10 @@ const storage = multer.diskStorage({
     fs.mkdirSync(uploadDir, { recursive: true });
     cb(null, uploadDir);
   },
-  filename: function (req, file, cb) {
-    const uniqueName = Date.now() + path.extname(file.originalname);
-    cb(null, uniqueName);
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname);
+    cb(null, 'photo-' + uniqueSuffix + ext);
   },
 });
 

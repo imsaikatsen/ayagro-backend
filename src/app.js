@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const helmet = require('helmet');
 const morgan = require('morgan');
 
@@ -14,12 +15,23 @@ app.use(
   cors({
     origin: 'http://localhost:5173',
     credentials: true,
+    // exposedHeaders: ['Content-Type'],
   })
 );
 app.use(helmet());
 app.use(morgan('dev'));
 app.use(express.json());
 
+app.use('/uploads/products', (req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  next();
+});
+
+app.use(
+  '/uploads/products',
+  express.static(path.join(__dirname, 'uploads/products'))
+);
 // routes
 app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
