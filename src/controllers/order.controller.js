@@ -1,0 +1,75 @@
+const orderService = require('../services/order.service');
+
+class OrderController {
+  // Create a new order
+  async create(req, res, next) {
+    try {
+      const orderData = req.body;
+      orderData.user_id = req.user.id; // Assuming the authenticated user ID is in req.user
+
+      const newOrder = await orderService.createOrder(orderData);
+      res.status(201).json({
+        message: 'Order created successfully',
+        data: newOrder,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Get all orders
+  async getAll(req, res, next) {
+    try {
+      const orders = await orderService.getAllOrders();
+      res.status(200).json({
+        message: 'Orders fetched successfully',
+        data: orders,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Get order by ID
+  async getById(req, res, next) {
+    try {
+      const order = await orderService.getOrderById(req.params.id);
+      res.status(200).json({
+        message: 'Order fetched successfully',
+        data: order,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Update order by ID
+  async update(req, res, next) {
+    try {
+      const updatedOrder = await orderService.updateOrderById(
+        req.params.id,
+        req.body
+      );
+      res.status(200).json({
+        message: 'Order updated successfully',
+        data: updatedOrder,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Delete order by ID
+  async delete(req, res, next) {
+    try {
+      await orderService.deleteOrderById(req.params.id);
+      res.status(200).json({
+        message: 'Order deleted successfully',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+}
+
+module.exports = new OrderController();
