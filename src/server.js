@@ -1,7 +1,10 @@
 const app = require('./app'); // Import app from app.js
 const connectDB = require('./config/db'); // Import the database connection function
 
-require('dotenv').config();
+// require('dotenv').config();
+
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 // Error Handling Middleware
 const errorMiddleware = require('./middlewares/error.middleware');

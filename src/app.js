@@ -14,17 +14,24 @@ const app = express();
 // Use necessary middlewares
 app.use(
   cors({
-    origin: 'http://localhost:5173',
+    origin: ['http://localhost:5173', 'https://test.asole.xyz'],
     credentials: true,
-    // exposedHeaders: ['Content-Type'],
   })
 );
 app.use(helmet());
 app.use(morgan('dev'));
 app.use(express.json());
 
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Credentials', 'true');
+  next();
+});
+
 app.use('/uploads/products', (req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+  res.setHeader('Access-Control-Allow-Origin', [
+    'http://localhost:5173',
+    'https://test.asole.xyz',
+  ]);
   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
   next();
 });
