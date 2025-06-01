@@ -5,6 +5,7 @@ const authMiddleware = require('../middlewares/auth.middleware');
 const productController = require('../controllers/product.controller');
 const upload = require('../config/multerConfig');
 const validate = require('../middlewares/validate.middleware');
+
 const productValidationSchema = require('../validations/product.validation');
 
 router.post(

@@ -4,6 +4,10 @@ const productService = require('../services/product.service');
 class ProductController {
   async create(req, res, next) {
     try {
+      if (!req.file) {
+        return res.status(400).json({ message: 'Product image is required' });
+      }
+
       const productData = req.body;
       if (req.file) {
         productData.productImage = req.file.filename;

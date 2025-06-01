@@ -5,9 +5,11 @@ const fs = require('fs');
 // Directory to save uploaded files
 const uploadDir = 'src/uploads/products';
 
+// Accepted image types
+const allowedTypes = /jpeg|jpg|png|gif/;
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    // Ensure the directory exists
     fs.mkdirSync(uploadDir, { recursive: true });
     cb(null, uploadDir);
   },
@@ -18,6 +20,22 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage });
+const fileFilter = (req, file, cb) => {
+  const extname = allowedTypes.test(
+    path.extname(file.originalname).toLowerCase()
+  );
+  const mimetype = allowedTypes.test(file.mimetype);
+  if (extname && mimetype) {
+    cb(null, true);
+  } else {
+    cb(new Error('Only image files (jpeg, jpg, png, gif) are allowed!'));
+  }
+};
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB limit
+  fileFilter,
+});
 
 module.exports = upload;
