@@ -3,6 +3,11 @@ const Joi = require('joi');
 // RegEx for a 24-hex-char MongoDB ObjectId
 const objectIdPattern = /^[0-9a-fA-F]{24}$/;
 
+// RegEx for duration strings like "3 days", "2 hours"
+const durationPattern = /^\d+\s*(hour|hours|day|days|month|months)$/i;
+
+const allowedStatuses = ['active', 'inactive', 'live'];
+
 const createProductSchema = Joi.object({
   category: Joi.string().pattern(objectIdPattern).required().messages({
     'string.empty': 'Category ID is required',
@@ -31,7 +36,30 @@ const createProductSchema = Joi.object({
   }),
 
   isActive: Joi.boolean().optional(),
-}).unknown(true); // allow other keys (like productImage)
+
+  earningRate: Joi.number().positive().required().messages({
+    'number.base': 'Earning rate must be a number',
+    'number.positive': 'Earning rate must be a positive number',
+    'any.required': 'Earning rate is required',
+  }),
+
+  duration: Joi.string().trim().pattern(durationPattern).required().messages({
+    'string.pattern.base':
+      'Duration must be in a valid format (e.g., "3 days", "2 hours")',
+    'any.required': 'Duration is required',
+  }),
+
+  location: Joi.string().trim().max(100).optional().messages({
+    'string.max': 'Location cannot exceed 100 characters',
+  }),
+
+  status: Joi.string()
+    .valid(...allowedStatuses)
+    .optional()
+    .messages({
+      'any.only': `Status must be one of: ${allowedStatuses.join(', ')}`,
+    }),
+}).unknown(true);
 
 const updateProductSchema = Joi.object({
   category: Joi.string().pattern(objectIdPattern).messages({
@@ -45,6 +73,26 @@ const updateProductSchema = Joi.object({
   }),
   stock: Joi.number().integer().min(0).optional(),
   isActive: Joi.boolean().optional(),
+  earningRate: Joi.number().positive().optional().messages({
+    'number.base': 'Earning rate must be a number',
+    'number.positive': 'Earning rate must be a positive number',
+  }),
+
+  duration: Joi.string().trim().pattern(durationPattern).optional().messages({
+    'string.pattern.base':
+      'Duration must be in a valid format (e.g., "3 days", "2 hours")',
+  }),
+
+  location: Joi.string().trim().max(100).optional().messages({
+    'string.max': 'Location cannot exceed 100 characters',
+  }),
+
+  status: Joi.string()
+    .valid(...allowedStatuses)
+    .optional()
+    .messages({
+      'any.only': `Status must be one of: ${allowedStatuses.join(', ')}`,
+    }),
 }).unknown(true);
 
 module.exports = {

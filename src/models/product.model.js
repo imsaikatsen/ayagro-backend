@@ -32,6 +32,24 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    duration: {
+      type: String, // e.g., "3 months", "1 year", etc.
+      trim: true,
+    },
+    status: {
+      type: String,
+      enum: ['active', 'inactive', 'live'],
+    },
+    location: {
+      type: String,
+      trim: true,
+    },
+    earningRate: {
+      type: Number, // hourly rate or something similar
+    },
+    totalRate: {
+      type: Number, // maybe derived from earningRate * duration in hours/days
+    },
   },
   { timestamps: true }
 );
