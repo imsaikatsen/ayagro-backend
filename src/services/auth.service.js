@@ -1,35 +1,33 @@
 // services/auth.service.js
+
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const userRepository = require('../repositories/user.repository');
 const ApiError = require('../utils/apiError');
+const OTP = require('../models/otp.model');
+const { generateOtp, getExpiry } = require('../utils/otp.util');
+const { sendOtpToEmail, sendOtpToPhone } = require('../utils/otpSender');
 
 class AuthService {
   async registerUser(userData) {
     const { email, password, role } = userData;
 
-    // Check if user exists
     const existingUser = await userRepository.findByEmail(email);
     if (existingUser) {
       throw new ApiError(400, 'User already exists with this email');
     }
 
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Assign default role if not provided
     const userToCreate = {
       ...userData,
       password: hashedPassword,
       role: role || 'customer',
     };
 
-    // Create user
     const createdUser = await userRepository.create(userToCreate);
 
-    // Remove sensitive info
     const { password: _, ...safeUser } = createdUser.toObject();
-
     return safeUser;
   }
 
@@ -44,7 +42,6 @@ class AuthService {
       throw new ApiError(401, 'Invalid email or password');
     }
 
-    // Prepare JWT payload
     const payload = {
       id: user._id,
       email: user.email,
@@ -94,6 +91,134 @@ class AuthService {
       throw new ApiError(404, 'User not found');
     }
     return;
+  }
+
+  async requestOtp(emailOrPhone) {
+    let user;
+
+    const isEmail = emailOrPhone.includes('@');
+
+    if (isEmail) {
+      user = await userRepository.findByEmail(emailOrPhone);
+    } else {
+      user = await userRepository.findByPhone(emailOrPhone);
+    }
+
+    // Auto-create customer if not found
+    if (!user) {
+      const userData = {
+        role: 'customer',
+        isVerified: false,
+        email: isEmail ? emailOrPhone : '',
+        phone: !isEmail ? emailOrPhone : '',
+      };
+
+      user = await userRepository.create(userData);
+    }
+
+    // Generate OTP
+    const otpCode = generateOtp();
+    const expiresAt = getExpiry(5); // 5 minutes
+
+    // Save OTP in DB
+    await OTP.create({
+      userId: user._id,
+      code: otpCode,
+      expiresAt,
+    });
+
+    // Send OTP
+    if (isEmail) {
+      await sendOtpToEmail(user.email, otpCode);
+    } else {
+      await sendOtpToPhone(user.phone, otpCode);
+    }
+
+    return { message: 'OTP sent successfully' };
+  }
+
+  async verifyOtp(identifier, code) {
+    if (!identifier || !code) {
+      throw new ApiError(400, 'Identifier and code are required');
+    }
+
+    const isEmail = identifier.includes('@');
+
+    const user = isEmail
+      ? await userRepository.findByEmail(identifier)
+      : await userRepository.findByPhone(identifier);
+
+    if (!user) {
+      throw new ApiError(404, 'User not found');
+    }
+
+    const otpRecord = await OTP.findOne({ userId: user._id }).sort({
+      createdAt: -1,
+    });
+
+    if (
+      !otpRecord ||
+      otpRecord.code !== code ||
+      otpRecord.expiresAt < new Date()
+    ) {
+      throw new ApiError(401, 'Invalid or expired OTP');
+    }
+
+    // Optional: delete the used OTP
+    await OTP.deleteMany({ userId: user._id });
+
+    const token = jwt.sign(
+      { id: user._id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    return {
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+      },
+    };
+  }
+
+  // ✅ Admin Login with email or phone + password
+  async adminLogin(identifier, password) {
+    const user = await userRepository.findByEmailOrPhone(identifier);
+    if (!user || user.role !== 'admin') {
+      throw new ApiError(403, 'Only admin can login here');
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new ApiError(401, 'Invalid credentials');
+    }
+
+    const token = jwt.sign(
+      {
+        id: user._id,
+        email: user.email,
+        role: user.role,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    const { password: _, ...safeUser } = user.toObject();
+
+    return {
+      token,
+      user: {
+        id: safeUser._id,
+        email: safeUser.email,
+        role: safeUser.role,
+        firstName: safeUser.firstName,
+        lastName: safeUser.lastName,
+        phone: safeUser.phone,
+      },
+    };
   }
 }
 

@@ -34,4 +34,8 @@ router.delete(
   authController.deleteUser
 );
 
+router.post('/request-otp', authController.requestOtp); // Customer OTP request
+router.post('/verify-otp', authController.verifyOtp); // Customer OTP verify
+router.post('/admin-login', authController.adminLogin); // Admin login by email/phone
+
 module.exports = router;

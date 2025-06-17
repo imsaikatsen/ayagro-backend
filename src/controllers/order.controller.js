@@ -5,7 +5,7 @@ class OrderController {
   async create(req, res, next) {
     try {
       const orderData = req.body;
-      orderData.user_id = req.user.id; // Assuming the authenticated user ID is in req.user
+      orderData.user_id = req.user.id;
 
       const newOrder = await orderService.createOrder(orderData);
       res.status(201).json({

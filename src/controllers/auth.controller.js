@@ -65,6 +65,50 @@ class AuthController {
       next(error);
     }
   }
+
+  async requestOtp(req, res, next) {
+    try {
+      const { emailOrPhone } = req.body;
+
+      if (!emailOrPhone) {
+        return res
+          .status(400)
+          .json({ success: false, message: 'Email or phone is required' });
+      }
+
+      const result = await authService.requestOtp(emailOrPhone);
+
+      return res.status(200).json({ success: true, message: result.message });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async verifyOtp(req, res, next) {
+    try {
+      const { identifier, code } = req.body;
+      const result = await authService.verifyOtp(identifier, code);
+      res.status(200).json({
+        message: 'OTP verified successfully',
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async adminLogin(req, res, next) {
+    try {
+      const { identifier, password } = req.body;
+      const result = await authService.adminLogin(identifier, password);
+      res.status(200).json({
+        message: 'Admin login successful',
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = new AuthController();

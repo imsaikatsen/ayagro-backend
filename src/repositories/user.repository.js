@@ -40,6 +40,12 @@ class UserRepository {
   async deleteById(userId) {
     return await User.findByIdAndDelete(userId);
   }
+
+  async findByEmailOrPhone(identifier) {
+    return await User.findOne({
+      $or: [{ email: identifier }, { phone: identifier }],
+    });
+  }
 }
 
 module.exports = new UserRepository();
