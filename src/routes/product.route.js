@@ -9,7 +9,7 @@ const validate = require('../middlewares/validate.middleware');
 const productValidationSchema = require('../validations/product.validation');
 
 router.post(
-  '/create',
+  '/',
   authMiddleware.authenticate,
   authMiddleware.authorizeRoles('admin'),
   upload.single('productImage'),
@@ -17,7 +17,7 @@ router.post(
   productController.create
 );
 
-router.get('/', authMiddleware.authenticate, productController.getAll);
+router.get('/', productController.getAll);
 router.get('/:id', authMiddleware.authenticate, productController.getById);
 router.put(
   '/:id',

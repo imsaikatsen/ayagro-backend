@@ -7,7 +7,7 @@ const validate = require('../middlewares/validate.middleware');
 const orderValidationSchema = require('../validations/order.validation');
 
 router.post(
-  '/create',
+  '/',
   authMiddleware.authenticate,
   authMiddleware.authorizeRoles('admin'),
   validate(orderValidationSchema.createOrderSchema),

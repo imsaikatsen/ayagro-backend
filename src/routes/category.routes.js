@@ -11,15 +11,15 @@ const {
 
 // Create category - Only accessible to authenticated admins
 router.post(
-  '/create',
+  '/',
   authMiddleware.authenticate,
   authMiddleware.authorizeRoles('admin'),
   validate(createCategorySchema),
   categoryController.create
 );
 
-// Get all categories - Accessible to any authenticated user
-router.get('/', authMiddleware.authenticate, categoryController.getAll);
+// Get all categories - PUBLIC access (no auth)
+router.get('/', categoryController.getAll);
 
 // Get single category by ID - Accessible to any authenticated user
 router.get('/:id', authMiddleware.authenticate, categoryController.getById);

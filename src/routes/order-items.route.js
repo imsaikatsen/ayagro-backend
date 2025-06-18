@@ -10,7 +10,7 @@ const {
 } = require('../validations/order-items.validation');
 
 router.post(
-  '/create',
+  '/',
   authMiddleware.authenticate,
   authMiddleware.authorizeRoles('admin'),
   validate(createOrderItemSchema),

@@ -9,7 +9,7 @@ const {
 } = require('../validations/cart.validation');
 
 router.post(
-  '/create',
+  '/',
   authMiddleware.authenticate,
   validate(createCartSchema),
   cartController.create
