@@ -6,8 +6,8 @@ class ProductRepository {
     return await Product.create(productData);
   }
 
-  async findAll() {
-    return await Product.find().populate('category');
+  async findAll(filter = {}) {
+    return await Product.find(filter).populate('category');
   }
 
   async findById(productId) {

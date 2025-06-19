@@ -23,7 +23,13 @@ class ProductController {
 
   async getAll(req, res, next) {
     try {
-      const products = await productService.getAllProducts();
+      const { category } = req.query;
+      const filter = {};
+
+      if (category) {
+        filter.category = category;
+      }
+      const products = await productService.getAllProducts(filter);
       res
         .status(200)
         .json({ message: 'Products fetched successfully', data: products });

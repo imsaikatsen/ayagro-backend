@@ -8,8 +8,8 @@ class ProductService {
     return await productRepository.create(data);
   }
 
-  async getAllProducts() {
-    return await productRepository.findAll();
+  async getAllProducts(filter = {}) {
+    return await productRepository.findAll(filter);
   }
 
   async getProductById(productId) {

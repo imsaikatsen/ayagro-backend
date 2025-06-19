@@ -18,7 +18,7 @@ router.post(
 );
 
 router.get('/', productController.getAll);
-router.get('/:id', authMiddleware.authenticate, productController.getById);
+router.get('/:id', productController.getById);
 router.put(
   '/:id',
   authMiddleware.authenticate,

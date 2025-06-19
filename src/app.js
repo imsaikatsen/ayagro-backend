@@ -4,9 +4,6 @@ const path = require('path');
 const helmet = require('helmet');
 const morgan = require('morgan');
 
-const swaggerUi = require('swagger-ui-express');
-const YAML = require('yamljs');
-
 const authRoutes = require('./routes/auth.routes');
 const categoryRoutes = require('./routes/category.routes');
 const productRoutes = require('./routes/product.route');
@@ -17,10 +14,6 @@ const cartCheckoutRoutes = require('./routes/cart-checkout.route');
 const profileRoutes = require('./routes/profile.route');
 
 const app = express();
-
-const swaggerDocument = YAML.load('./docs/swagger.yaml');
-
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Use necessary middlewares
 app.use(
@@ -38,11 +31,32 @@ app.use((req, res, next) => {
   next();
 });
 
+// app.use('/uploads/products', (req, res, next) => {
+//   res.setHeader('Access-Control-Allow-Origin', [
+//     'http://localhost:5173',
+//     'https://test.asole.xyz',
+//   ]);
+//   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+//   next();
+// });
+
+// app.use(
+//   '/uploads/products',
+//   express.static(path.join(__dirname, 'uploads/products'))
+// );
+
 app.use('/uploads/products', (req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', [
-    'http://localhost:5173',
-    'https://test.asole.xyz',
-  ]);
+  const allowedOrigins =
+    process.env.NODE_ENV === 'production'
+      ? ['https://test.asole.xyz']
+      : ['http://localhost:5173'];
+
+  const origin = req.headers.origin;
+
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+
   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
   next();
 });
@@ -51,6 +65,7 @@ app.use(
   '/uploads/products',
   express.static(path.join(__dirname, 'uploads/products'))
 );
+
 // routes
 app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
