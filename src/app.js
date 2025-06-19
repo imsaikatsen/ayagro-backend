@@ -4,6 +4,9 @@ const path = require('path');
 const helmet = require('helmet');
 const morgan = require('morgan');
 
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
+
 const authRoutes = require('./routes/auth.routes');
 const categoryRoutes = require('./routes/category.routes');
 const productRoutes = require('./routes/product.route');
@@ -14,6 +17,10 @@ const cartCheckoutRoutes = require('./routes/cart-checkout.route');
 const profileRoutes = require('./routes/profile.route');
 
 const app = express();
+
+const swaggerDocument = YAML.load('./docs/swagger.yaml');
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Use necessary middlewares
 app.use(

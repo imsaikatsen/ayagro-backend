@@ -1,0 +1,159 @@
+openapi: 3.0.0
+info:
+  title: Category API
+  description: API documentation for managing categories
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000/api
+    description: Local development server
+
+tags:
+  - name: Categories
+    description: Endpoints related to category management
+
+paths:
+  /categories:
+    get:
+      tags:
+        - Categories
+      summary: Get all categories (Public)
+      description: Returns a list of all available categories. No authentication required.
+      responses:
+        '200':
+          description: List of categories
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Categories fetched
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Category'
+        '500':
+          description: Internal Server Error
+
+    post:
+      tags:
+        - Categories
+      summary: Create a new category
+      description: Creates a category (Admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryInput'
+      responses:
+        '201':
+          description: Category created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '400':
+          description: Bad request (Validation error)
+        '401':
+          description: Unauthorized (No token or invalid token)
+        '403':
+          description: Forbidden (Admin access required)
+
+  /categories/{id}:
+    get:
+      tags:
+        - Categories
+      summary: Get a single category by ID
+      description: Returns one category. Requires authentication.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The category ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Category found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '404':
+          description: Category not found
+
+    put:
+      tags:
+        - Categories
+      summary: Update category
+      description: Updates a category by ID (Admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Category ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryInput'
+      responses:
+        '200':
+          description: Category updated successfully
+        '403':
+          description: Forbidden
+
+    delete:
+      tags:
+        - Categories
+      summary: Delete category
+      description: Deletes a category by ID (Admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Category ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Category deleted
+        '403':
+          description: Forbidden
+
+components:
+  schemas:
+    Category:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 6825926d55c9975b61f36678
+        name:
+          type: string
+          example: Long Term
+        createdAt:
+          type: string
+          format: date-time
+          example: 2025-05-15T07:06:21.411Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2025-05-19T06:59:31.844Z
+        __v:
+          type: integer
+          example: 0
+
+    CategoryInput:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: New Category
