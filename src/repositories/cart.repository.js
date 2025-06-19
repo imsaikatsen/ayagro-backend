@@ -5,6 +5,10 @@ class CartRepository {
     return await Cart.create(data);
   }
 
+  async findOne(userId, productId) {
+    return await Cart.findOne({ user_id: userId, product_id: productId });
+  }
+
   async findAllByUser(userId) {
     return await Cart.find({ user_id: userId }).populate('product_id');
   }

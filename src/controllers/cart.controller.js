@@ -17,8 +17,11 @@ class CartController {
 
   async getAll(req, res, next) {
     try {
-      const cartItems = await cartService.getCartItemsByUser(req.user.id);
-      res.status(200).json({ message: 'Cart items fetched', data: cartItems });
+      const { items, totalQty, subtotal } =
+        await cartService.getCartItemsByUser(req.user.id);
+      res
+        .status(200)
+        .json({ message: 'Cart items fetched', items, totalQty, subtotal });
     } catch (error) {
       next(error);
     }

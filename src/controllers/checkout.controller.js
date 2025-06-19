@@ -1,6 +1,6 @@
 const cartService = require('../services/cart-checkout.service');
 
-class CartCheckoutController {
+class checkoutController {
   async checkout(req, res, next) {
     try {
       const userId = req.user.id;
@@ -17,4 +17,4 @@ class CartCheckoutController {
   }
 }
 
-module.exports = new CartCheckoutController();
+module.exports = new checkoutController();

@@ -3,11 +3,30 @@ const ApiError = require('../utils/apiError');
 
 class CartService {
   async createCartItem(data) {
+    // Check if already exists
+    const existing = await cartRepository.findOne(
+      data.user_id,
+      data.product_id
+    );
+    if (existing) {
+      const updatedQty = existing.quantity + data.quantity;
+      return await cartRepository.updateById(existing._id, {
+        quantity: updatedQty,
+      });
+    }
+
     return await cartRepository.create(data);
   }
 
   async getCartItemsByUser(userId) {
-    return await cartRepository.findAllByUser(userId);
+    const cartItems = await cartRepository.findAllByUser(userId);
+    const totalQty = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+    const subtotal = cartItems.reduce(
+      (acc, item) => acc + item.quantity * item.product_id.price,
+      0
+    );
+
+    return { items: cartItems, totalQty, subtotal };
   }
 
   async getCartItemById(id) {
