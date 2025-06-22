@@ -50,7 +50,7 @@ class checkoutService {
     };
   }
   async checkout(userId, paymentMethod, isInterested) {
-    const cartItems = await cartRepository.findByUser(userId);
+    const cartItems = await checkoutRepository.findByUser(userId);
     if (!cartItems || cartItems.length === 0) {
       throw new ApiError(400, 'Your cart is empty');
     }
@@ -83,7 +83,7 @@ class checkoutService {
       orderItems.push(orderItem);
     }
 
-    await cartRepository.deleteAllByUser(userId);
+    await checkoutRepository.deleteAllByUser(userId);
 
     return { order, orderItems, project: cartItems[0]?.product_id };
   }

@@ -70,6 +70,33 @@ class OrderController {
       next(error);
     }
   }
+
+  async uploadProof(req, res, next) {
+    try {
+      const orderId = req.params.id;
+      const filename = req.file.filename;
+      const result = await orderService.attachProof(orderId, filename);
+      res.status(200).json({
+        message: 'Proof of payment uploaded successfully',
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getOrderDetails(req, res, next) {
+    try {
+      const orderId = req.params.id;
+      const result = await orderService.getOrderDetails(orderId, req.user.id);
+      res.status(200).json({
+        message: 'Order project details fetched',
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = new OrderController();

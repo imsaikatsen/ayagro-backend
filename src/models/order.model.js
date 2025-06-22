@@ -1,15 +1,5 @@
 const mongoose = require('mongoose');
 
-const shippingSchema = new mongoose.Schema({
-  fullname: String,
-  phone: String,
-  street: String,
-  city: String,
-  state: String,
-  zip: String,
-  country: String,
-});
-
 const orderSchema = new mongoose.Schema(
   {
     user_id: {
@@ -31,7 +21,10 @@ const orderSchema = new mongoose.Schema(
       enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
       default: 'pending',
     },
-    shippingAddress: shippingSchema,
+    proofOfPayment: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true }
 );
