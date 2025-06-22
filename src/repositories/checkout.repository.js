@@ -1,6 +1,8 @@
 const Cart = require('../models/cart.model');
+const Profile = require('../models/profile.model');
+const Product = require('../models/product.model');
 
-class CartCheckoutRepository {
+class CheckoutRepository {
   async addToCart(data) {
     return await Cart.create(data);
   }
@@ -20,6 +22,14 @@ class CartCheckoutRepository {
   async deleteItem(cartItemId) {
     return await Cart.findByIdAndDelete(cartItemId);
   }
+
+  async findCartItemsByUser(userId) {
+    return await Cart.find({ user_id: userId }).populate('product_id');
+  }
+
+  async findProfileByUserId(userId) {
+    return await Profile.findOne({ user_id: userId });
+  }
 }
 
-module.exports = new CartCheckoutRepository();
+module.exports = new CheckoutRepository();

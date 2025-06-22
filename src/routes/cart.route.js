@@ -26,6 +26,6 @@ router.put(
 );
 
 router.delete('/:id', authMiddleware.authenticate, cartController.delete);
-router.delete('/', authMiddleware.authenticate, cartController.clear); // Clear all items
+router.delete('/', authMiddleware.authenticate, cartController.clear);
 
 module.exports = router;

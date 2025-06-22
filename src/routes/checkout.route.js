@@ -11,4 +11,9 @@ router.post(
   checkoutController.checkout
 );
 
+router.get(
+  '/preview',
+  authMiddleware.authenticate,
+  checkoutController.getPreview
+);
 module.exports = router;
