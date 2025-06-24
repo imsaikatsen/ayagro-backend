@@ -68,7 +68,25 @@ class AuthService {
   }
 
   async getAllUsers() {
-    return await userRepository.findAll();
+    const users = await userRepository.findAll();
+
+    return users.map((user) => {
+      const fromUser = `${user.firstName || ''} ${user.lastName || ''}`.trim();
+      const fromProfile = `${user.profile?.personalInfo?.firstName || ''} ${
+        user.profile?.personalInfo?.lastName || ''
+      }`.trim();
+
+      return {
+        _id: user._id,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+        isVerified: user.isVerified,
+        fullName: fromUser || fromProfile || 'N/A',
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      };
+    });
   }
 
   async updateUserById(userId, updateData) {

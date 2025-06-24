@@ -6,11 +6,23 @@ class OrderRepository {
   }
 
   async findAll() {
-    return await Order.find().populate('user_id');
+    return await Order.find().populate({
+      path: 'user_id',
+      populate: {
+        path: 'profile',
+        select: 'personalInfo.firstName personalInfo.lastName',
+      },
+    });
   }
 
   async findById(orderId) {
-    return await Order.findById(orderId).populate('user_id');
+    return await Order.findById(orderId).populate({
+      path: 'user_id',
+      populate: {
+        path: 'profile',
+        select: 'personalInfo.firstName personalInfo.lastName',
+      },
+    });
   }
 
   async updateById(orderId, updateData) {

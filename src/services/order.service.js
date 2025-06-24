@@ -12,7 +12,18 @@ class OrderService {
   }
 
   async getAllOrders() {
-    return await orderRepository.findAll();
+    const orders = await orderRepository.findAll();
+
+    return orders.map((order) => {
+      const firstName = order?.user_id?.profile?.personalInfo?.firstName || '';
+      const lastName = order?.user_id?.profile?.personalInfo?.lastName || '';
+      const fullName = `${firstName} ${lastName}`.trim();
+
+      return {
+        ...order.toObject(),
+        customerName: fullName,
+      };
+    });
   }
 
   async getOrderById(orderId) {
@@ -20,7 +31,17 @@ class OrderService {
     if (!order) {
       throw new ApiError(404, 'Order not found');
     }
-    return order;
+    const firstName = order?.user_id?.profile?.personalInfo?.firstName || '';
+    const lastName = order?.user_id?.profile?.personalInfo?.lastName || '';
+    const fullName = `${firstName} ${lastName}`.trim();
+
+    const orderObj = order.toObject();
+    delete orderObj.user_id.profile; // Remove profile to keep API clean
+
+    return {
+      ...orderObj, // Convert Mongoose doc to plain JS object
+      customerName: fullName,
+    };
   }
 
   async updateOrderById(orderId, updateData) {
@@ -52,7 +73,7 @@ class OrderService {
     );
     const profile = await Profile.findOne({ user_id: userId });
 
-    const item = items[0]; // MVP - only one product per order
+    const item = items[0];
     const unit = item.quantity;
     const unitPrice = item.price;
     const totalInvestment = unit * unitPrice;
