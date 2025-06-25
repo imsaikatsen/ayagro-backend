@@ -16,12 +16,25 @@ class AuthController {
     }
   }
 
-  async login(req, res, next) {
+  // async login(req, res, next) {
+  //   try {
+  //     const { email, password } = req.body;
+  //     const result = await authService.loginUser(email, password);
+  //     res.status(200).json({
+  //       message: 'Login successful!',
+  //       data: result,
+  //     });
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // }
+
+  async adminLogin(req, res, next) {
     try {
-      const { email, password } = req.body;
-      const result = await authService.loginUser(email, password);
+      const { identifier, password } = req.body;
+      const result = await authService.adminLogin(identifier, password);
       res.status(200).json({
-        message: 'Login successful!',
+        message: 'Admin login successful',
         data: result,
       });
     } catch (error) {
@@ -68,15 +81,15 @@ class AuthController {
 
   async requestOtp(req, res, next) {
     try {
-      const { emailOrPhone } = req.body;
+      const { identifier } = req.body;
 
-      if (!emailOrPhone) {
+      if (!identifier) {
         return res
           .status(400)
           .json({ success: false, message: 'Email or phone is required' });
       }
 
-      const result = await authService.requestOtp(emailOrPhone);
+      const result = await authService.requestOtp(identifier);
 
       return res.status(200).json({ success: true, message: result.message });
     } catch (err) {
@@ -97,16 +110,21 @@ class AuthController {
     }
   }
 
-  async adminLogin(req, res, next) {
+  async resendOtp(req, res, next) {
     try {
-      const { identifier, password } = req.body;
-      const result = await authService.adminLogin(identifier, password);
-      res.status(200).json({
-        message: 'Admin login successful',
-        data: result,
-      });
-    } catch (error) {
-      next(error);
+      const { identifier } = req.body;
+
+      if (!identifier) {
+        return res
+          .status(400)
+          .json({ success: false, message: 'Email or phone is required' });
+      }
+
+      const result = await authService.resendOtp(identifier);
+
+      return res.status(200).json({ success: true, message: result.message });
+    } catch (err) {
+      next(err);
     }
   }
 }

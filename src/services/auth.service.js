@@ -31,26 +31,63 @@ class AuthService {
     return safeUser;
   }
 
-  async loginUser(email, password) {
-    const user = await userRepository.findByEmail(email);
-    if (!user) {
-      throw new ApiError(401, 'Invalid email or password');
+  // async loginUser(email, password) {
+  //   const user = await userRepository.findByEmail(email);
+  //   if (!user) {
+  //     throw new ApiError(401, 'Invalid email or password');
+  //   }
+
+  //   const isPasswordValid = await bcrypt.compare(password, user.password);
+  //   if (!isPasswordValid) {
+  //     throw new ApiError(401, 'Invalid email or password');
+  //   }
+
+  //   const payload = {
+  //     id: user._id,
+  //     email: user.email,
+  //     role: user.role,
+  //   };
+
+  //   const token = jwt.sign(payload, process.env.JWT_SECRET, {
+  //     expiresIn: '7d',
+  //   });
+
+  //   const { password: _, ...safeUser } = user.toObject();
+
+  //   return {
+  //     token,
+  //     user: {
+  //       id: safeUser._id,
+  //       email: safeUser.email,
+  //       role: safeUser.role,
+  //       firstName: safeUser.firstName,
+  //       lastName: safeUser.lastName,
+  //       phone: safeUser.phone,
+  //     },
+  //   };
+  // }
+
+  // ✅ Admin Login with email or phone + password
+  async adminLogin(identifier, password) {
+    const user = await userRepository.findByEmailOrPhone(identifier);
+    if (!user || user.role !== 'admin') {
+      throw new ApiError(403, 'Only admin can login here');
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw new ApiError(401, 'Invalid email or password');
+      throw new ApiError(401, 'Invalid credentials');
     }
 
-    const payload = {
-      id: user._id,
-      email: user.email,
-      role: user.role,
-    };
-
-    const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: '7d',
-    });
+    const token = jwt.sign(
+      {
+        id: user._id,
+        email: user.email,
+        role: user.role,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
 
     const { password: _, ...safeUser } = user.toObject();
 
@@ -111,15 +148,15 @@ class AuthService {
     return;
   }
 
-  async requestOtp(emailOrPhone) {
+  async requestOtp(identifier) {
     let user;
 
-    const isEmail = emailOrPhone.includes('@');
+    const isEmail = identifier.includes('@');
 
     if (isEmail) {
-      user = await userRepository.findByEmail(emailOrPhone);
+      user = await userRepository.findByEmail(identifier);
     } else {
-      user = await userRepository.findByPhone(emailOrPhone);
+      user = await userRepository.findByPhone(identifier);
     }
 
     // Auto-create customer if not found
@@ -127,8 +164,8 @@ class AuthService {
       const userData = {
         role: 'customer',
         isVerified: false,
-        email: isEmail ? emailOrPhone : '',
-        phone: !isEmail ? emailOrPhone : '',
+        email: isEmail ? identifier : '',
+        phone: !isEmail ? identifier : '',
       };
 
       user = await userRepository.create(userData);
@@ -202,41 +239,44 @@ class AuthService {
     };
   }
 
-  // ✅ Admin Login with email or phone + password
-  async adminLogin(identifier, password) {
-    const user = await userRepository.findByEmailOrPhone(identifier);
-    if (!user || user.role !== 'admin') {
-      throw new ApiError(403, 'Only admin can login here');
+  async resendOtp(identifier) {
+    if (!identifier) throw new ApiError(400, 'Identifier is required');
+    const isEmail = identifier.includes('@');
+    const user = isEmail
+      ? await userRepository.findByEmail(identifier)
+      : await userRepository.findByPhone(identifier);
+
+    if (!user) {
+      throw new ApiError(404, 'User not found');
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      throw new ApiError(401, 'Invalid credentials');
+    const latestOtp = await OTP.findOne({ userId: user._id }).sort({
+      createdAt: -1,
+    });
+
+    if (latestOtp) {
+      const oneMinuteAgo = new Date(Date.now() - 60 * 1000);
+      if (latestOtp.createdAt > oneMinuteAgo) {
+        throw new ApiError(429, 'Otp was recently sent. Please wait a minute');
+      }
     }
 
-    const token = jwt.sign(
-      {
-        id: user._id,
-        email: user.email,
-        role: user.role,
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
+    //Genarate new OTP
+    const newCode = generateOtp();
+    const expiresAt = getExpiry(5); // 5 minutes
+    await OTP.create({
+      userId: user._id,
+      code: newCode,
+      expiresAt,
+    });
 
-    const { password: _, ...safeUser } = user.toObject();
+    if (isEmail) {
+      await sendOtpToEmail(user.email, newCode);
+    } else {
+      await sendOtpToPhone(user.phone, newCode);
+    }
 
-    return {
-      token,
-      user: {
-        id: safeUser._id,
-        email: safeUser.email,
-        role: safeUser.role,
-        firstName: safeUser.firstName,
-        lastName: safeUser.lastName,
-        phone: safeUser.phone,
-      },
-    };
+    return { message: 'OTP resent successfully' };
   }
 }
 

@@ -8,8 +8,11 @@ const validate = require('../middlewares/validate.middleware');
 
 const router = express.Router();
 
+//...... ADMIN ..........//
+
 router.post('/register', validate(registerSchema), authController.register);
-router.post('/login', authController.login);
+router.post('/admin-login', authController.adminLogin); // Admin login by email/phone
+// router.post('/login', authController.login);
 
 //...... USER ..........//
 
@@ -36,6 +39,6 @@ router.delete(
 
 router.post('/request-otp', authController.requestOtp); // Customer OTP request
 router.post('/verify-otp', authController.verifyOtp); // Customer OTP verify
-router.post('/admin-login', authController.adminLogin); // Admin login by email/phone
+router.post('/resend-otp', authController.resendOtp);
 
 module.exports = router;
