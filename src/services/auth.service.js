@@ -164,8 +164,7 @@ class AuthService {
       const userData = {
         role: 'customer',
         isVerified: false,
-        email: isEmail ? identifier : '',
-        phone: !isEmail ? identifier : '',
+        ...(isEmail ? { email: identifier } : { phone: identifier }),
       };
 
       user = await userRepository.create(userData);
