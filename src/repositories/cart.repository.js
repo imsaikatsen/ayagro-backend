@@ -5,13 +5,21 @@ class CartRepository {
     return await Cart.create(data);
   }
 
-  async findOne(userId, productId) {
-    return await Cart.findOne({ user_id: userId, product_id: productId });
+  async findOneByQuery(query) {
+    return await Cart.findOne(query);
   }
 
-  async findAllByUser(userId) {
-    return await Cart.find({ user_id: userId }).populate('product_id');
+  async findAllByIdentifier(identifier) {
+    return await Cart.find(identifier).populate('product_id');
   }
+
+  // async findOne(userId, productId) {
+  //   return await Cart.findOne({ user_id: userId, product_id: productId });
+  // }
+
+  // async findAllByUser(userId) {
+  //   return await Cart.find({ user_id: userId }).populate('product_id');
+  // }
 
   async findById(id) {
     return await Cart.findById(id).populate('product_id');

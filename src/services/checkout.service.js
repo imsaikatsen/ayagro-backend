@@ -87,6 +87,29 @@ class checkoutService {
 
     return { order, orderItems, project: cartItems[0]?.product_id };
   }
+
+  async transferGuestCartToUser(cart_token, user_id) {
+    const guestItems = await checkoutRepository.findAllByCartToken(cart_token);
+    if (!guestItems.length) return false;
+
+    for (const item of guestItems) {
+      const existing = await checkoutRepository.findByUserAndProduct(
+        user_id,
+        item.product_id
+      );
+      if (existing) {
+        existing.quantity += item.quantity;
+        await existing.save();
+        await checkoutRepository.deleteItem(item._id);
+      } else {
+        item.user_id = user_id;
+        item.cart_token = undefined;
+        await item.save();
+      }
+    }
+
+    return true;
+  }
 }
 
 module.exports = new checkoutService();

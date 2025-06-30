@@ -1,15 +1,26 @@
 const cartService = require('../services/cart.service');
 
+const { v4: uuidv4 } = require('uuid');
+
 class CartController {
   async create(req, res, next) {
     try {
+      const identifier = req.user
+        ? { user_id: req.user.id }
+        : { cart_token: req.headers['x-cart-token'] || uuidv4() };
+
       const data = {
-        user_id: req.user.id,
+        ...identifier,
         product_id: req.body.product_id,
         quantity: req.body.quantity,
       };
+
       const cart = await cartService.createCartItem(data);
-      res.status(201).json({ message: 'Cart item added', data: cart });
+      res.status(201).json({
+        message: 'Cart item added',
+        data: cart,
+        cart_token: identifier.cart_token,
+      });
     } catch (error) {
       next(error);
     }
@@ -17,8 +28,13 @@ class CartController {
 
   async getAll(req, res, next) {
     try {
-      const { items, totalQty, subtotal } =
-        await cartService.getCartItemsByUser(req.user.id);
+      const identifier = req.user
+        ? { user_id: req.user.id }
+        : { cart_token: req.headers['x-cart-token'] };
+
+      const { items, totalQty, subtotal } = await cartService.getCartItems(
+        identifier
+      );
       res
         .status(200)
         .json({ message: 'Cart items fetched', items, totalQty, subtotal });

@@ -32,7 +32,7 @@ async function sendOtpToEmail(email, otp) {
 // Send OTP via Alpha SMS
 async function sendOtpToPhone(phone, otp) {
   const formattedPhone = formatPhone(phone);
-  const smsText = `Ayagro OTP: ${otp}`;
+  const smsText = `Ayagro OTP : ${otp}`;
 
   try {
     const response = await axios.post('https://api.sms.net.bd/sendsms', null, {
@@ -47,8 +47,6 @@ async function sendOtpToPhone(phone, otp) {
       console.error('❌ SMS sending failed:', response.data);
       throw new Error('Failed to send OTP via Alpha SMS');
     }
-
-    console.log('✅ OTP sent successfully to', formattedPhone);
   } catch (error) {
     console.error('❌ SMS send error:', error.message);
     throw new Error('Failed to send OTP via Alpha SMS');

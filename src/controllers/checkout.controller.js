@@ -5,6 +5,12 @@ class checkoutController {
     try {
       const { paymentMethod, isInterested } = req.body;
       const userId = req.user.id;
+      const cart_token = req.headers['x-cart-token'];
+
+      if (cart_token) {
+        await checkoutService.transferGuestCartToUser(cart_token, userId);
+      }
+
       const result = await checkoutService.checkout(
         userId,
         paymentMethod,

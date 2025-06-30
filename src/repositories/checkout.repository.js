@@ -30,6 +30,14 @@ class CheckoutRepository {
   async findProfileByUserId(userId) {
     return await Profile.findOne({ user_id: userId });
   }
+
+  async findAllByCartToken(cart_token) {
+    return await Cart.find({ cart_token }).populate('product_id');
+  }
+
+  async findByUserAndProduct(user_id, product_id) {
+    return await Cart.findOne({ user_id, product_id });
+  }
 }
 
 module.exports = new CheckoutRepository();
