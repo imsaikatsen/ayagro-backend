@@ -24,10 +24,10 @@ const productSchema = new mongoose.Schema(
     productImage: {
       type: String,
     },
-    stock: {
-      type: Number,
-      default: 0,
-    },
+    // stock: {
+    //   type: Number,
+    //   default: 0,
+    // },
     isActive: {
       type: Boolean,
       default: true,
@@ -44,12 +44,8 @@ const productSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    earningRate: {
-      type: Number, // hourly rate or something similar
-    },
-    totalRate: {
-      type: Number, // maybe derived from earningRate * duration in hours/days
-    },
+    earningRateMin: { type: Number },
+    earningRateMax: { type: Number },
   },
   { timestamps: true }
 );

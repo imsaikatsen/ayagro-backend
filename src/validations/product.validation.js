@@ -20,7 +20,7 @@ const createProductSchema = Joi.object({
     'string.max': 'Product name cannot exceed 100 characters',
   }),
 
-  shortDescription: Joi.string().trim().max(500).allow('', null).messages({
+  shortDescription: Joi.string().trim().max(1000).allow('', null).messages({
     'string.max': 'Short description cannot exceed 500 characters',
   }),
 
@@ -29,19 +29,13 @@ const createProductSchema = Joi.object({
     'number.positive': 'Price must be a positive number',
   }),
 
-  stock: Joi.number().integer().min(0).optional().messages({
-    'number.base': 'Stock must be a number',
-    'number.integer': 'Stock must be an integer',
-    'number.min': 'Stock cannot be negative',
-  }),
+  // stock: Joi.number().integer().min(0).optional().messages({
+  //   'number.base': 'Stock must be a number',
+  //   'number.integer': 'Stock must be an integer',
+  //   'number.min': 'Stock cannot be negative',
+  // }),
 
   isActive: Joi.boolean().optional(),
-
-  earningRate: Joi.number().positive().required().messages({
-    'number.base': 'Earning rate must be a number',
-    'number.positive': 'Earning rate must be a positive number',
-    'any.required': 'Earning rate is required',
-  }),
 
   duration: Joi.string().trim().pattern(durationPattern).required().messages({
     'string.pattern.base':
