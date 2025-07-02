@@ -13,8 +13,8 @@ class ProductService {
 
     return products.map((product) => {
       const price = product.price;
-      const earningRateMin = product.earningRateMin ?? 6.75;
-      const earningRateMax = product.earningRateMax ?? 9.5;
+      const earningRateMin = product.earningRateMin ?? 0.0;
+      const earningRateMax = product.earningRateMax ?? 0.0;
 
       const netReturnMin = (price * earningRateMin) / 100;
       const netReturnMax = (price * earningRateMax) / 100;

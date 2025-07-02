@@ -27,7 +27,18 @@ class checkoutController {
 
   async getPreview(req, res, next) {
     try {
-      const userId = req.user.id;
+      const userId = req.user?.id;
+      const cart_token = req.headers['x-cart-token'];
+
+      if (!userId) {
+        throw new ApiError(401, 'Login required for checkout preview');
+      }
+
+      // Transfer guest cart to user if token exists
+      if (cart_token) {
+        await checkoutService.transferGuestCartToUser(cart_token, userId);
+      }
+
       const data = await checkoutService.getCheckoutPreview(userId);
       res.status(200).json({
         message: 'Checkout preview fetched successfully',
