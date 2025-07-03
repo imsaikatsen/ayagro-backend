@@ -96,6 +96,30 @@ class OrderController {
     } catch (error) {
       next(error);
     }
+
+    try {
+      const orderId = req.params.id;
+      const result = await orderService.getOrderDetails(orderId, req.user.id);
+      res.status(200).json({
+        message: 'Order proof-view data fetched successfully',
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getProofView(req, res, next) {
+    try {
+      const orderId = req.params.id;
+      const result = await orderService.getOrderDetails(orderId, req.user.id);
+      res.status(200).json({
+        message: 'Order project details for proof view',
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 }
 

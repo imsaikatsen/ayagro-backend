@@ -16,12 +16,26 @@ router.post(
 );
 router.get('/', authMiddleware.authenticate, orderController.getAll);
 router.get('/:id', authMiddleware.authenticate, orderController.getById);
+
+router.get(
+  '/:id',
+  authMiddleware.authenticate,
+  orderController.getOrderDetails
+);
+
+router.get(
+  '/:id/proof-view',
+  authMiddleware.authenticate,
+  orderController.getProofView
+);
+
 router.put(
   '/:id',
   authMiddleware.authenticate,
   authMiddleware.authorizeRoles('admin'),
   orderController.update
 );
+
 router.delete(
   '/:id',
   authMiddleware.authenticate,
@@ -29,11 +43,6 @@ router.delete(
   orderController.delete
 );
 
-router.get(
-  '/:id',
-  authMiddleware.authenticate,
-  orderController.getOrderDetails
-);
 router.post(
   '/:id/upload-proof',
   authMiddleware.authenticate,

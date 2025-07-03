@@ -66,42 +66,47 @@ class OrderService {
 
   async getOrderDetails(orderId, userId) {
     const order = await Order.findOne({ _id: orderId, user_id: userId });
-    if (!order) throw new Error('Order not found');
+    if (!order) throw new ApiError(404, 'Order not found');
 
     const items = await OrderItem.find({ order_id: order._id }).populate(
       'product_id'
     );
+    if (!items.length) throw new ApiError(404, 'Order items not found');
+
     const profile = await Profile.findOne({ user_id: userId });
+    if (!profile) throw new ApiError(404, 'User profile not found');
 
     const item = items[0];
+    const product = item.product_id;
+
     const unit = item.quantity;
     const unitPrice = item.price;
     const totalInvestment = unit * unitPrice;
-    const product = item.product_id;
 
-    const profitRange = [
-      Math.floor(unitPrice * (product.totalRate / 100)),
-      Math.ceil(unitPrice * ((product.totalRate / 100) * 1.2)),
-    ];
+    const minRate = product.earningRateMin;
+    const maxRate = product.earningRateMax;
 
-    const capitalReturn = [
-      totalInvestment + profitRange[0],
-      totalInvestment + profitRange[1],
-    ];
+    const netReturnMin = Math.floor(totalInvestment * (minRate / 100));
+    const netReturnMax = Math.ceil(totalInvestment * (maxRate / 100));
+
+    const totalReturnMin = totalInvestment + netReturnMin;
+    const totalReturnMax = totalInvestment + netReturnMax;
 
     return {
       project: {
+        id: product._id,
         name: product.name,
         unitPrice,
         unit,
         totalInvestment,
-        expectedROI: `${product.totalRate}%`,
-        estimatedProfitRange: profitRange,
+        expectedROI: `${minRate}% ~ ${maxRate}%`,
+        estimatedProfitRange: [netReturnMin, netReturnMax],
         location: product.location,
         duration: product.duration,
         investmentDate: order.createdAt,
         completionDate: null,
         status: order.orderStatus,
+        productImage: product.productImage || null,
       },
       bankInfo: {
         accountName: `${profile.personalInfo.firstName} ${profile.personalInfo.lastName}`,
@@ -110,10 +115,17 @@ class OrderService {
         branchName: profile.bankingInfo.branch,
       },
       profitSimulation: {
-        months: parseInt(product.duration),
-        roiRange: `${product.totalRate}%`,
-        profitRange,
-        capitalReturnRange: capitalReturn,
+        earningRateRange: `${minRate}% ~ ${maxRate}%`,
+        duration: product.duration,
+        totalInvestment,
+        netReturn: {
+          min: netReturnMin,
+          max: netReturnMax,
+        },
+        totalReturn: {
+          min: totalReturnMin,
+          max: totalReturnMax,
+        },
       },
       proofOfPayment: order.proofOfPayment || null,
     };
