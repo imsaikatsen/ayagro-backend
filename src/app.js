@@ -32,35 +32,35 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.use('/uploads/products', (req, res, next) => {
-//   res.setHeader('Access-Control-Allow-Origin', [
-//     'http://localhost:5173',
-//     'https://test.asole.xyz',
-//   ]);
-//   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-//   next();
-// });
-
-// app.use(
-//   '/uploads/products',
-//   express.static(path.join(__dirname, 'uploads/products'))
-// );
-
 app.use('/uploads/products', (req, res, next) => {
-  const allowedOrigins =
-    process.env.NODE_ENV === 'production'
-      ? ['https://test.asole.xyz']
-      : ['http://localhost:5173'];
-
-  const origin = req.headers.origin;
-
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  }
-
+  res.setHeader('Access-Control-Allow-Origin', [
+    'http://localhost:5173',
+    'https://test.asole.xyz',
+  ]);
   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
   next();
 });
+
+app.use(
+  '/uploads/products',
+  express.static(path.join(__dirname, 'uploads/products'))
+);
+
+// app.use('/uploads/products', (req, res, next) => {
+//   const allowedOrigins =
+//     process.env.NODE_ENV === 'production'
+//       ? ['https://test.asole.xyz']
+//       : ['http://localhost:5173'];
+
+//   const origin = req.headers.origin;
+
+//   if (allowedOrigins.includes(origin)) {
+//     res.setHeader('Access-Control-Allow-Origin', origin);
+//   }
+
+//   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+//   next();
+// });
 
 app.use(
   '/uploads/products',
