@@ -121,6 +121,22 @@ class OrderController {
       next(error);
     }
   }
+
+  async cancelOrder(req, res, next) {
+    try {
+      const orderId = req.params.id;
+      const userId = req.user.id;
+
+      const result = await orderService.cancelOrder(orderId, userId);
+
+      res.status(200).json({
+        message: 'Order cancelled successfully',
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = new OrderController();
