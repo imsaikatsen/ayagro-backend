@@ -130,6 +130,27 @@ class OrderService {
       proofOfPayment: order.proofOfPayment || null,
     };
   }
+
+  async cancelOrder(orderId, userId) {
+    const order = await Order.findOne({ _id: orderId, user_id: userId });
+    if (!order) throw new ApiError(404, 'Order not found');
+
+    if (order.orderStatus === 'cancelled') {
+      throw new ApiError(400, 'Order is already cancelled');
+    }
+
+    if (order.orderStatus === 'completed') {
+      throw new ApiError(400, 'Completed order cannot be cancelled');
+    }
+
+    const updatedOrder = await Order.findByIdAndUpdate(
+      orderId,
+      { orderStatus: 'cancelled' },
+      { new: true }
+    );
+
+    return updatedOrder;
+  }
 }
 
 module.exports = new OrderService();

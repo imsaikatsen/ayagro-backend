@@ -50,4 +50,10 @@ router.post(
   orderController.uploadProof
 );
 
+router.put(
+  '/:id/cancel',
+  authMiddleware.authenticate,
+  orderController.cancelOrder
+);
+
 module.exports = router;
