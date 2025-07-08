@@ -1,10 +1,12 @@
 const orderRepository = require('../repositories/order.repository');
 const ApiError = require('../utils/apiError');
+const sendPushNotification = require('../utils/sendPushNotification');
 
 const Order = require('../models/order.model');
 const OrderItem = require('../models/order-items.model');
 const Product = require('../models/product.model');
 const Profile = require('../models/profile.model');
+const User = require('../models/user.model');
 
 class OrderService {
   async createOrder(data) {
