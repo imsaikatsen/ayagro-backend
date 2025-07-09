@@ -2,7 +2,8 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-const uploadDir = 'src/uploads/proofs';
+// const uploadDir = 'src/uploads/proofs';
+const uploadDir = path.join(__dirname, '../uploads/proofs');
 const allowedTypes = /jpeg|jpg|png|gif|pdf/;
 
 const storage = multer.diskStorage({

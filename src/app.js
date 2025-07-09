@@ -4,6 +4,8 @@ const path = require('path');
 const helmet = require('helmet');
 const morgan = require('morgan');
 
+const serveWithCORS = require('./utils/serveStaticWithCORS');
+
 const authRoutes = require('./routes/auth.routes');
 const categoryRoutes = require('./routes/category.routes');
 const productRoutes = require('./routes/product.route');
@@ -32,40 +34,18 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.use('/uploads/products', (req, res, next) => {
-//   res.setHeader('Access-Control-Allow-Origin', [
-//     'http://localhost:5173',
-//     'https://test.asole.xyz',
-//   ]);
-//   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-//   next();
-// });
-
-// app.use(
-//   '/uploads/products',
-//   express.static(path.join(__dirname, 'uploads/products'))
-// );
-
-app.use('/uploads/products', (req, res, next) => {
-  const allowedOrigins =
-    process.env.NODE_ENV === 'production'
-      ? ['https://test.asole.xyz']
-      : ['http://localhost:5173'];
-
-  const origin = req.headers.origin;
-
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  }
-
-  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-  next();
-});
-
-app.use(
-  '/uploads/products',
-  express.static(path.join(__dirname, 'uploads/products'))
+serveWithCORS(
+  app,
+  path.join(__dirname, 'uploads/products'),
+  '/uploads/products'
 );
+serveWithCORS(
+  app,
+  path.join(__dirname, 'uploads/categories'),
+  '/uploads/categories'
+);
+
+serveWithCORS(app, path.join(__dirname, 'uploads/proofs'), '/uploads/proofs');
 
 // routes
 app.use('/api/auth', authRoutes);

@@ -3,7 +3,6 @@ const path = require('path');
 const fs = require('fs');
 
 // Directory to save uploaded files
-// const uploadDir = 'src/uploads/products';
 const uploadDir = path.join(__dirname, '../uploads/products');
 
 // Accepted image types
