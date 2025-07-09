@@ -6,6 +6,18 @@ class ProductRepository {
     return await Product.create(productData);
   }
 
+  async findPaginated(filter = {}, skip = 0, limit = 10) {
+    return await Product.find(filter)
+      .populate('category')
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+  }
+
+  async count(filter = {}) {
+    return await Product.countDocuments(filter);
+  }
+
   async findAll(filter = {}) {
     return await Product.find(filter).populate('category');
   }
