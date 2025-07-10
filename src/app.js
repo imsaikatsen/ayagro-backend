@@ -21,7 +21,11 @@ const app = express();
 // Use necessary middlewares
 app.use(
   cors({
-    origin: ['http://localhost:5173', 'https://test.asole.xyz'],
+    origin: [
+      'http://localhost:5173',
+      'https://test.asole.xyz',
+      'https://ayagro.netlify.app',
+    ],
     credentials: true,
   })
 );
