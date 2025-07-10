@@ -23,16 +23,34 @@ class ProductController {
 
   async getAll(req, res, next) {
     try {
-      const { category } = req.query;
+      // const { category } = req.query;
+      // const filter = {};
+
+      // if (category) {
+      //   filter.category = category;
+      // }
+      // const products = await productService.getAllProducts(filter);
+      // res
+      //   .status(200)
+      //   .json({ message: 'Products fetched successfully', data: products });
+
+      const { category, page = 1, limit = 10 } = req.query;
       const filter = {};
 
       if (category) {
         filter.category = category;
       }
-      const products = await productService.getAllProducts(filter);
-      res
-        .status(200)
-        .json({ message: 'Products fetched successfully', data: products });
+
+      const result = await productService.getAllProducts(
+        filter,
+        parseInt(page),
+        parseInt(limit)
+      );
+
+      res.status(200).json({
+        message: 'Products fetched successfully',
+        ...result,
+      });
     } catch (error) {
       next(error);
     }

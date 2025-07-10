@@ -9,11 +9,14 @@ const {
   updateCategorySchema,
 } = require('../validations/category.validation');
 
+const upload = require('../config/multerCategoryConfig');
+
 // Create category - Only accessible to authenticated admins
 router.post(
   '/',
   authMiddleware.authenticate,
   authMiddleware.authorizeRoles('admin'),
+  upload.single('categoryImage'),
   validate(createCategorySchema),
   categoryController.create
 );
@@ -29,6 +32,7 @@ router.put(
   '/:id',
   authMiddleware.authenticate,
   authMiddleware.authorizeRoles('admin'),
+  upload.single('categoryImage'),
   validate(updateCategorySchema),
   categoryController.update
 );

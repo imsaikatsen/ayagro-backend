@@ -3,6 +3,8 @@ const orderRepository = require('../repositories/order.repository');
 const orderItemRepository = require('../repositories/order-items.repository');
 const productRepository = require('../repositories/product.repository');
 const ApiError = require('../utils/apiError');
+const User = require('../models/user.model');
+const sendSMS = require('../utils/sendSMS');
 
 class checkoutService {
   async getCheckoutPreview(userId) {
@@ -65,7 +67,7 @@ class checkoutService {
     const order = await orderRepository.create({
       user_id: userId,
       totalAmount,
-      orderStatus: 'processing',
+      orderStatus: 'booked',
       paymentStatus: 'Unpaid',
       paymentMethod,
       isInterested,
@@ -84,6 +86,17 @@ class checkoutService {
     }
 
     await checkoutRepository.deleteAllByUser(userId);
+
+    try {
+      const user = await User.findById(userId);
+      if (user?.phone) {
+        const message = `✅ Your project has been booked successfully. Thanks for stay with Ayagro . Order ID: ${order._id}`;
+        console.log('📤 Sending SMS to:', user.phone, message);
+        await sendSMS(user.phone, message);
+      }
+    } catch (smsErr) {
+      console.error('❌ Failed to send booking SMS:', smsErr.message);
+    }
 
     return { order, orderItems, project: cartItems[0]?.product_id };
   }

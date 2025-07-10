@@ -4,7 +4,12 @@ const categoryService = require('../services/category.service');
 class CategoryController {
   async create(req, res, next) {
     try {
-      const category = await categoryService.createCategory(req.body);
+      const categoryData = req.body;
+      if (req.file) {
+        categoryData.categoryImage = req.file.filename;
+      }
+
+      const category = await categoryService.createCategory(categoryData);
       res.status(201).json({ message: 'Category created', data: category });
     } catch (error) {
       next(error);
@@ -31,9 +36,14 @@ class CategoryController {
 
   async update(req, res, next) {
     try {
+      const updateData = req.body;
+      if (req.file) {
+        updateData.categoryImage = req.file.filename;
+      }
+
       const updated = await categoryService.updateCategoryById(
         req.params.id,
-        req.body
+        updateData
       );
       res.status(200).json({ message: 'Category updated', data: updated });
     } catch (error) {
