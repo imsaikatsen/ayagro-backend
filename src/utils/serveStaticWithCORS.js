@@ -6,8 +6,8 @@ function serveWithCORS(app, staticPath, route) {
   app.use(route, (req, res, next) => {
     const allowedOrigins =
       process.env.NODE_ENV === 'production'
-        ? ['https://test.asole.xyz']
-        : ['http://localhost:5173'];
+        ? ['https://test.asole.xyz', 'https://ayagro.netlify.app']
+        : ['http://localhost:5173', 'https://ayagro.netlify.app'];
 
     const origin = req.headers.origin;
 
