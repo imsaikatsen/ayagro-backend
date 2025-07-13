@@ -90,7 +90,7 @@ class checkoutService {
     try {
       const user = await User.findById(userId);
       if (user?.phone) {
-        const message = `✅ Your project has been booked successfully. Thanks for stay with Ayagro . Order ID: ${order._id}`;
+        const message = `Your project has been booked successfully. Thanks for stay with Ayagro . Order ID: ${order._id}`;
         console.log('📤 Sending SMS to:', user.phone, message);
         await sendSMS(user.phone, message);
       }
@@ -136,18 +136,50 @@ class checkoutService {
 
     for (const order of orders) {
       const items = await orderItemRepository.findByOrderId(order._id);
+
+      const formattedItems = items.map((item) => {
+        const product = item.product_id;
+
+        const quantity = item.quantity;
+        const unitPrice = item.price;
+        const totalInvestment = quantity * unitPrice;
+
+        const minRate = product.earningRateMin || 0;
+        const maxRate = product.earningRateMax || 0;
+
+        const netReturnMin = Math.floor(totalInvestment * (minRate / 100));
+        const netReturnMax = Math.ceil(totalInvestment * (maxRate / 100));
+        const totalReturnMin = totalInvestment + netReturnMin;
+        const totalReturnMax = totalInvestment + netReturnMax;
+
+        return {
+          productId: product._id,
+          productName: product.name,
+          price: unitPrice,
+          quantity,
+          totalInvestment,
+          duration: product.duration,
+          earningRateMin: minRate,
+          earningRateMax: maxRate,
+          profitSimulation: {
+            min: netReturnMin,
+            max: netReturnMax,
+            totalReturnMin,
+            totalReturnMax,
+          },
+          location: product.location,
+          productImage: product.productImage || null,
+        };
+      });
+
       result.push({
         orderId: order._id,
         status: order.orderStatus,
         paymentStatus: order.paymentStatus,
-        totalAmount: order.totalAmount,
         paymentMethod: order.paymentMethod,
+        totalAmount: order.totalAmount,
         createdAt: order.createdAt,
-        items: items.map((item) => ({
-          productId: item.product_id,
-          quantity: item.quantity,
-          price: item.price,
-        })),
+        items: formattedItems,
       });
     }
 

@@ -8,6 +8,7 @@ const serveWithCORS = require('./utils/serveStaticWithCORS');
 
 const authRoutes = require('./routes/auth.routes');
 const categoryRoutes = require('./routes/category.routes');
+const serviceRoutes = require('./routes/service.routes');
 const productRoutes = require('./routes/product.route');
 const orderRoutes = require('./routes/order.route');
 const orderItemsRoutes = require('./routes/order-items.route');
@@ -49,11 +50,18 @@ serveWithCORS(
   '/uploads/categories'
 );
 
+serveWithCORS(
+  app,
+  path.join(__dirname, 'uploads/services'),
+  '/uploads/services'
+);
+
 serveWithCORS(app, path.join(__dirname, 'uploads/proofs'), '/uploads/proofs');
 
 // routes
 app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
+app.use('/api/services', serviceRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/order-items', orderItemsRoutes);
