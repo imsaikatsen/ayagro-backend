@@ -46,6 +46,12 @@ serveWithCORS(
   '/uploads/categories'
 );
 
+serveWithCORS(
+  app,
+  path.join(__dirname, 'uploads/services'),
+  '/uploads/services'
+);
+
 serveWithCORS(app, path.join(__dirname, 'uploads/proofs'), '/uploads/proofs');
 
 // routes
