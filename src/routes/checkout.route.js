@@ -16,4 +16,12 @@ router.get(
   authMiddleware.authenticate,
   checkoutController.getPreview
 );
+
+router.get(
+  '/my-orders',
+  authMiddleware.authenticate,
+  authMiddleware.authorizeRoles('customer'),
+  checkoutController.getMyOrders
+);
+
 module.exports = router;

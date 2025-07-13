@@ -123,6 +123,44 @@ class checkoutService {
 
     return true;
   }
+
+  async getUserOrders(userId, page, limit) {
+    const skip = (page - 1) * limit;
+
+    const [orders, total] = await Promise.all([
+      orderRepository.findOrdersByUserPaginated(userId, skip, limit),
+      orderRepository.countOrdersByUser(userId),
+    ]);
+
+    const result = [];
+
+    for (const order of orders) {
+      const items = await orderItemRepository.findByOrderId(order._id);
+      result.push({
+        orderId: order._id,
+        status: order.orderStatus,
+        paymentStatus: order.paymentStatus,
+        totalAmount: order.totalAmount,
+        paymentMethod: order.paymentMethod,
+        createdAt: order.createdAt,
+        items: items.map((item) => ({
+          productId: item.product_id,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+      });
+    }
+
+    return {
+      data: result,
+      pagination: {
+        totalOrders: total,
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+        pageSize: limit,
+      },
+    };
+  }
 }
 
 module.exports = new checkoutService();
