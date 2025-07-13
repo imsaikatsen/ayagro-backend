@@ -35,6 +35,17 @@ class OrderRepository {
   async deleteById(orderId) {
     return await Order.findByIdAndDelete(orderId);
   }
+
+  async findOrdersByUserPaginated(userId, skip, limit) {
+    return await Order.find({ user_id: userId })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+  }
+
+  async countOrdersByUser(userId) {
+    return await Order.countDocuments({ user_id: userId });
+  }
 }
 
 module.exports = new OrderRepository();

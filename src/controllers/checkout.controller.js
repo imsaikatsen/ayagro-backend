@@ -48,6 +48,23 @@ class checkoutController {
       next(err);
     }
   }
+
+  async getMyOrders(req, res, next) {
+    try {
+      const userId = req.user.id;
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+
+      const result = await checkoutService.getUserOrders(userId, page, limit);
+
+      res.status(200).json({
+        message: 'Orders fetched successfully',
+        ...result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = new checkoutController();

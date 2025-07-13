@@ -23,6 +23,10 @@ class OrderItemRepository {
   async deleteById(id) {
     return await OrderItem.findByIdAndDelete(id);
   }
+
+  async findByOrderId(orderId) {
+    return await OrderItem.find({ order_id: orderId }).populate('product_id');
+  }
 }
 
 module.exports = new OrderItemRepository();
