@@ -15,6 +15,13 @@ router.post(
 );
 router.get('/me', authMiddleware.authenticate, profileController.getMyProfile);
 
+router.put(
+  '/',
+  authMiddleware.authenticate,
+  validate(profileValidationSchema.profileSchema),
+  profileController.createOrUpdateProfile
+);
+
 // Optionally restrict to admin
 router.get(
   '/all-profile',

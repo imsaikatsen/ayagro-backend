@@ -14,6 +14,7 @@ const profileSchema = new mongoose.Schema(
       dateOfBirth: Date,
       gender: String,
       nidNumber: String,
+      phone: String,
     },
     bankingInfo: {
       bankName: String,
@@ -24,6 +25,7 @@ const profileSchema = new mongoose.Schema(
       name: String,
       relation: String,
       nidNumber: String,
+      phone: String,
     },
     status: {
       type: String,
