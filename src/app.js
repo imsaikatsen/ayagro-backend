@@ -16,6 +16,7 @@ const cartRoutes = require('./routes/cart.route');
 const checkoutRoutes = require('./routes/checkout.route');
 const profileRoutes = require('./routes/profile.route');
 const faqRoutes = require('./routes/faq.route');
+const headercardRoutes = require('./routes/headerCard.routes');
 
 const app = express();
 
@@ -56,6 +57,12 @@ serveWithCORS(
   '/uploads/services'
 );
 
+serveWithCORS(
+  app,
+  path.join(__dirname, 'uploads/header-cards'),
+  '/uploads/header-cards'
+);
+
 serveWithCORS(app, path.join(__dirname, 'uploads/proofs'), '/uploads/proofs');
 
 // routes
@@ -69,6 +76,7 @@ app.use('/api/cart', cartRoutes);
 app.use('/api/checkout', checkoutRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/faqs', faqRoutes);
+app.use('/api/header-cards', headercardRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {
