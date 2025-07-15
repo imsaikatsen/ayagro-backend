@@ -8,39 +8,6 @@ class ProductService {
     return await productRepository.create(data);
   }
 
-  // async getAllProducts(filter = {}) {
-  //   const products = await productRepository.findAll(filter);
-
-  //   return products.map((product) => {
-  //     const price = product.price;
-  //     const earningRateMin = product.earningRateMin ?? 0.0;
-  //     const earningRateMax = product.earningRateMax ?? 0.0;
-
-  //     const netReturnMin = (price * earningRateMin) / 100;
-  //     const netReturnMax = (price * earningRateMax) / 100;
-
-  //     const totalReturnMin = price + netReturnMin;
-  //     const totalReturnMax = price + netReturnMax;
-
-  //     return {
-  //       ...product.toObject(),
-  //       profitSimulation: {
-  //         earningRateRange: `${earningRateMin}% ~ ${earningRateMax}%`,
-  //         duration: product.duration,
-  //         totalInvestment: price,
-  //         netReturn: {
-  //           min: Math.round(netReturnMin),
-  //           max: Math.round(netReturnMax),
-  //         },
-  //         totalReturn: {
-  //           min: Math.round(totalReturnMin),
-  //           max: Math.round(totalReturnMax),
-  //         },
-  //       },
-  //     };
-  //   });
-  // }
-
   async getAllProducts(filter = {}, page = 1, limit = 10) {
     const skip = (page - 1) * limit;
     const products = await productRepository.findPaginated(filter, skip, limit);

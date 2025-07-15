@@ -23,17 +23,6 @@ class ProductController {
 
   async getAll(req, res, next) {
     try {
-      // const { category } = req.query;
-      // const filter = {};
-
-      // if (category) {
-      //   filter.category = category;
-      // }
-      // const products = await productService.getAllProducts(filter);
-      // res
-      //   .status(200)
-      //   .json({ message: 'Products fetched successfully', data: products });
-
       const { category, page = 1, limit = 10 } = req.query;
       const filter = {};
 
@@ -46,6 +35,13 @@ class ProductController {
         parseInt(page),
         parseInt(limit)
       );
+
+      if (!result.data || result.data.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: 'No products found',
+        });
+      }
 
       res.status(200).json({
         message: 'Products fetched successfully',

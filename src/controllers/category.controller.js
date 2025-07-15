@@ -19,6 +19,12 @@ class CategoryController {
   async getAll(req, res, next) {
     try {
       const categories = await categoryService.getAllCategories();
+      if (!categories || categories.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: 'No categories found',
+        });
+      }
       res.status(200).json({ message: 'Categories fetched', data: categories });
     } catch (error) {
       next(error);
