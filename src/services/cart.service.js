@@ -20,12 +20,20 @@ class CartService {
 
   async getCartItems(identifier) {
     const cartItems = await cartRepository.findAllByIdentifier(identifier);
+    const formattedItems = cartItems.map((item) => {
+      const { product_id, ...rest } = item._doc || item;
+      return {
+        ...rest,
+        product: product_id, // rename populated field
+      };
+    });
+
     const totalQty = cartItems.reduce((acc, item) => acc + item.quantity, 0);
     const subtotal = cartItems.reduce(
       (acc, item) => acc + item.quantity * item.product_id.price,
       0
     );
-    return { items: cartItems, totalQty, subtotal };
+    return { items: formattedItems, totalQty, subtotal };
   }
 
   async getCartItemById(id) {
@@ -34,14 +42,14 @@ class CartService {
     return cart;
   }
 
-  async updateCartItem(id, data) {
-    const updated = await cartRepository.updateById(id, data);
+  async updateCartItem(id, data, token) {
+    const updated = await cartRepository.updateById(id, data, token);
     if (!updated) throw new ApiError(500, 'Failed to update cart item');
     return updated;
   }
 
-  async deleteCartItem(id) {
-    const deleted = await cartRepository.deleteById(id);
+  async deleteCartItem(id, token) {
+    const deleted = await cartRepository.deleteById(id, token);
     if (!deleted) throw new ApiError(500, 'Failed to delete cart item');
   }
 

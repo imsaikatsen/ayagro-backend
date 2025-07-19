@@ -39,6 +39,17 @@ class CartRepository {
   async deleteAllByUser(userId) {
     return await Cart.deleteMany({ user_id: userId });
   }
+
+  async updateByIdAndToken(id, cart_token, data) {
+    return await Cart.findOneAndUpdate({ _id: id, cart_token }, data, {
+      new: true,
+      runValidators: true,
+    });
+  }
+
+  async deleteByIdAndToken(id, cart_token) {
+    return await Cart.findOneAndDelete({ _id: id, cart_token });
+  }
 }
 
 module.exports = new CartRepository();

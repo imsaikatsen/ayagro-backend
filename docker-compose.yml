@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo:6
+    container_name: ayagro-mongo
+    ports:
+      - "27018:27017"    
+    restart: always
+    volumes:
+      - mongo-data:/data/db
+
+  redis:
+    image: redis:7
+    container_name: ayagro-redis
+    ports:
+      - "6379:6379"
+    restart: always
+
+  app:
+    build: .
+    container_name: ayagro-app
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=development
+      - MONGO_URI=mongodb://mongo:27017/ayagro   
+      - REDIS_HOST=redis                      
+      - PORT=5000
+      - JWT_SECRET=Saikat123
+    volumes:
+      - .:/usr/src/app
+    command: npm run dev
+    depends_on:
+      - mongo
+      - redis
+
+volumes:
+  mongo-data:
