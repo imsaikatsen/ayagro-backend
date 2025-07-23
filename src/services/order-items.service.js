@@ -6,14 +6,44 @@ class OrderItemService {
     return await orderItemRepository.create(data);
   }
 
+  // async getAll() {
+  //   return await orderItemRepository.findAll();
+  // }
+
+  // async getById(id) {
+  //   const item = await orderItemRepository.findById(id);
+  //   if (!item) throw new ApiError(404, 'Order item not found');
+  //   return item;
+  // }
+
+  // service/orderItemService.js
+
   async getAll() {
-    return await orderItemRepository.findAll();
+    const items = await orderItemRepository.findAll();
+
+    return items.map((item) => {
+      const { product_id, order_id, ...rest } = item._doc || item;
+
+      return {
+        ...rest,
+        product: product_id,
+        order: order_id,
+      };
+    });
   }
 
   async getById(id) {
     const item = await orderItemRepository.findById(id);
-    if (!item) throw new ApiError(404, 'Order item not found');
-    return item;
+
+    if (!item) return null;
+
+    const { product_id, order_id, ...rest } = item._doc || item;
+
+    return {
+      ...rest,
+      product: product_id,
+      order: order_id,
+    };
   }
 
   async updateById(id, updateData) {

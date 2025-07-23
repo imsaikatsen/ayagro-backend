@@ -22,6 +22,11 @@ class OrderItemController {
   async getById(req, res, next) {
     try {
       const item = await orderItemService.getById(req.params.id);
+
+      if (!item) {
+        return res.status(404).json({ message: 'Item not found' });
+      }
+
       res.status(200).json({ message: 'Fetched successfully', data: item });
     } catch (err) {
       next(err);
