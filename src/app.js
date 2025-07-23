@@ -17,6 +17,7 @@ const checkoutRoutes = require('./routes/checkout.route');
 const profileRoutes = require('./routes/profile.route');
 const faqRoutes = require('./routes/faq.route');
 const headercardRoutes = require('./routes/headerCard.routes');
+const blogRoutes = require('./routes/blog.routes');
 
 const app = express();
 
@@ -65,6 +66,8 @@ serveWithCORS(
 
 serveWithCORS(app, path.join(__dirname, 'uploads/proofs'), '/uploads/proofs');
 
+serveWithCORS(app, path.join(__dirname, 'uploads/blogs'), '/uploads/blogs');
+
 // routes
 app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
@@ -77,6 +80,7 @@ app.use('/api/checkout', checkoutRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/faqs', faqRoutes);
 app.use('/api/header-cards', headercardRoutes);
+app.use('/api/blogs', blogRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {
