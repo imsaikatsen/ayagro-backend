@@ -1,5 +1,6 @@
 // controllers/product.controller.js
 const productService = require('../services/product.service');
+const broadcastPushNotification = require('../utils/broadcastPushNotification');
 
 class ProductController {
   async create(req, res, next) {
@@ -13,6 +14,13 @@ class ProductController {
         productData.productImage = req.file.filename;
       }
       const product = await productService.createProduct(productData);
+
+      const title = 'New Product Avaialable';
+      const body = `Check out our latest product: ${
+        product.name || 'New Item'
+      }!`;
+      await broadcastPushNotification(title, body);
+
       res
         .status(201)
         .json({ message: 'Product created successfully', data: product });
