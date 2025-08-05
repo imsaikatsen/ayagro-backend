@@ -7,26 +7,27 @@ const OrderItem = require('../models/order-items.model');
 const Product = require('../models/product.model');
 const Profile = require('../models/profile.model');
 const User = require('../models/user.model');
+const mongoose = require('mongoose');
 
 class OrderService {
   async createOrder(data) {
     return await orderRepository.create(data);
   }
 
-  async getAllOrders() {
-    const orders = await orderRepository.findAll();
+  // async getAllOrders() {
+  //   const orders = await orderRepository.findAll();
 
-    return orders.map((order) => {
-      const firstName = order?.user_id?.profile?.personalInfo?.firstName || '';
-      const lastName = order?.user_id?.profile?.personalInfo?.lastName || '';
-      const fullName = `${firstName} ${lastName}`.trim();
+  //   return orders.map((order) => {
+  //     const firstName = order?.user_id?.profile?.personalInfo?.firstName || '';
+  //     const lastName = order?.user_id?.profile?.personalInfo?.lastName || '';
+  //     const fullName = `${firstName} ${lastName}`.trim();
 
-      return {
-        ...order.toObject(),
-        customerName: fullName,
-      };
-    });
-  }
+  //     return {
+  //       ...order.toObject(),
+  //       customerName: fullName,
+  //     };
+  //   });
+  // }
 
   async getOrderById(orderId) {
     const order = await orderRepository.findById(orderId);
@@ -152,6 +153,39 @@ class OrderService {
     );
 
     return updatedOrder;
+  }
+
+  async getPaginatedOrders({ page = 1, limit = 10, search = '' }) {
+    const skip = (page - 1) * limit;
+    const query = {};
+
+    // Validate if the search string is a valid ObjectId before applying it
+    if (search && mongoose.Types.ObjectId.isValid(search)) {
+      query._id = new mongoose.Types.ObjectId(search);
+    }
+
+    const [orders, total] = await Promise.all([
+      Order.find(query)
+        .populate({
+          path: 'user_id',
+          populate: {
+            path: 'profile',
+            select: 'personalInfo.firstName personalInfo.lastName',
+          },
+        })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      Order.countDocuments(query),
+    ]);
+
+    return {
+      orders,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 }
 

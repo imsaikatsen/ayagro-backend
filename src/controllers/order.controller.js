@@ -18,12 +18,24 @@ class OrderController {
   }
 
   // Get all orders
+  // async getAll(req, res, next) {
+  //   try {
+  //     const orders = await orderService.getAllOrders();
+  //     res.status(200).json({
+  //       message: 'Orders fetched successfully',
+  //       data: orders,
+  //     });
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // }
+
   async getAll(req, res, next) {
     try {
-      const orders = await orderService.getAllOrders();
+      const result = await orderService.getPaginatedOrders(req.query);
       res.status(200).json({
         message: 'Orders fetched successfully',
-        data: orders,
+        ...result,
       });
     } catch (error) {
       next(error);
