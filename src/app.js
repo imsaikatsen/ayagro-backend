@@ -69,18 +69,18 @@ serveWithCORS(app, path.join(__dirname, 'uploads/proofs'), '/uploads/proofs');
 serveWithCORS(app, path.join(__dirname, 'uploads/blogs'), '/uploads/blogs');
 
 // routes
-app.use('/api/auth', authRoutes);
-app.use('/api/categories', categoryRoutes);
-app.use('/api/services', serviceRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/order-items', orderItemsRoutes);
-app.use('/api/cart', cartRoutes);
-app.use('/api/checkout', checkoutRoutes);
-app.use('/api/profile', profileRoutes);
-app.use('/api/faqs', faqRoutes);
-app.use('/api/header-cards', headercardRoutes);
-app.use('/api/blogs', blogRoutes);
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/categories', categoryRoutes);
+app.use('/api/v1/services', serviceRoutes);
+app.use('/api/v1/products', productRoutes);
+app.use('/api/v1/orders', orderRoutes);
+app.use('/api/v1/order-items', orderItemsRoutes);
+app.use('/api/v1/cart', cartRoutes);
+app.use('/api/v1/checkout', checkoutRoutes);
+app.use('/api/v1/profile', profileRoutes);
+app.use('/api/v1/faqs', faqRoutes);
+app.use('/api/v1/header-cards', headercardRoutes);
+app.use('/api/v1/blogs', blogRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {

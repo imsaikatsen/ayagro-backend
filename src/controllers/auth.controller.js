@@ -16,19 +16,6 @@ class AuthController {
     }
   }
 
-  // async login(req, res, next) {
-  //   try {
-  //     const { email, password } = req.body;
-  //     const result = await authService.loginUser(email, password);
-  //     res.status(200).json({
-  //       message: 'Login successful!',
-  //       data: result,
-  //     });
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // }
-
   async adminLogin(req, res, next) {
     try {
       const { identifier, password } = req.body;
@@ -42,12 +29,33 @@ class AuthController {
     }
   }
 
+  // async getUserList(req, res, next) {
+  //   try {
+  //     const users = await authService.getAllUsers();
+  //     res.status(200).json({
+  //       message: 'User list fetched successfully',
+  //       data: users,
+  //     });
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // }
+
   async getUserList(req, res, next) {
     try {
-      const users = await authService.getAllUsers();
+      const { page = 1, limit = 10, search = '' } = req.query;
+
+      const result = await authService.getAllUsers({ page, limit, search });
+
       res.status(200).json({
         message: 'User list fetched successfully',
-        data: users,
+        data: result.users,
+        meta: {
+          page: result.page,
+          limit: result.limit,
+          total: result.total,
+          totalPages: result.totalPages,
+        },
       });
     } catch (error) {
       next(error);

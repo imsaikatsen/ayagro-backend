@@ -104,10 +104,39 @@ class AuthService {
     };
   }
 
-  async getAllUsers() {
-    const users = await userRepository.findAll();
+  // async getAllUsers() {
+  //   const users = await userRepository.findAll();
 
-    return users.map((user) => {
+  //   return users.map((user) => {
+  //     const fromUser = `${user.firstName || ''} ${user.lastName || ''}`.trim();
+  //     const fromProfile = `${user.profile?.personalInfo?.firstName || ''} ${
+  //       user.profile?.personalInfo?.lastName || ''
+  //     }`.trim();
+
+  //     return {
+  //       _id: user._id,
+  //       email: user.email,
+  //       phone: user.phone,
+  //       role: user.role,
+  //       isVerified: user.isVerified,
+  //       fullName: fromUser || fromProfile || 'N/A',
+  //       createdAt: user.createdAt,
+  //       updatedAt: user.updatedAt,
+  //     };
+  //   });
+  // }
+
+  async getAllUsers({ page = 1, limit = 10, search = '' }) {
+    page = parseInt(page);
+    limit = parseInt(limit);
+
+    const { users, total } = await userRepository.findPaginatedUsers({
+      page,
+      limit,
+      search,
+    });
+
+    const formattedUsers = users.map((user) => {
       const fromUser = `${user.firstName || ''} ${user.lastName || ''}`.trim();
       const fromProfile = `${user.profile?.personalInfo?.firstName || ''} ${
         user.profile?.personalInfo?.lastName || ''
@@ -124,6 +153,14 @@ class AuthService {
         updatedAt: user.updatedAt,
       };
     });
+
+    return {
+      users: formattedUsers,
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async updateUserById(userId, updateData) {

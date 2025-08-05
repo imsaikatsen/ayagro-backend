@@ -49,6 +49,34 @@ class UserRepository {
       $or: [{ email: identifier }, { phone: identifier }],
     });
   }
+
+  async findPaginatedUsers({ page = 1, limit = 10, search = '' }) {
+    const query = {};
+
+    if (search) {
+      query.$or = [
+        { firstName: { $regex: search, $options: 'i' } },
+        { lastName: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+        { phone: { $regex: search, $options: 'i' } },
+      ];
+    }
+
+    const skip = (page - 1) * limit;
+    const users = await User.find(query)
+      .select('-password')
+      .populate({
+        path: 'profile',
+        select: 'personalInfo.firstName personalInfo.lastName',
+      })
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    const total = await User.countDocuments(query);
+
+    return { users, total };
+  }
 }
 
 module.exports = new UserRepository();
