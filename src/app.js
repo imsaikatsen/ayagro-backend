@@ -26,8 +26,9 @@ app.use(
   cors({
     origin: [
       'http://localhost:5173',
+      'http://localhost:5174',
       'https://test.asole.xyz',
-      'https://ayagro.netlify.app',
+      'https://ayagro.asia',
     ],
     credentials: true,
   })
