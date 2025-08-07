@@ -6,6 +6,7 @@ class OrderController {
     try {
       const orderData = req.body;
       orderData.user_id = req.user.id;
+      console.log('Creating order for user:', req.user?.id);
 
       const newOrder = await orderService.createOrder(orderData);
       res.status(201).json({
@@ -16,19 +17,6 @@ class OrderController {
       next(error);
     }
   }
-
-  // Get all orders
-  // async getAll(req, res, next) {
-  //   try {
-  //     const orders = await orderService.getAllOrders();
-  //     res.status(200).json({
-  //       message: 'Orders fetched successfully',
-  //       data: orders,
-  //     });
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // }
 
   async getAll(req, res, next) {
     try {

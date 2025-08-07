@@ -14,21 +14,6 @@ class OrderService {
     return await orderRepository.create(data);
   }
 
-  // async getAllOrders() {
-  //   const orders = await orderRepository.findAll();
-
-  //   return orders.map((order) => {
-  //     const firstName = order?.user_id?.profile?.personalInfo?.firstName || '';
-  //     const lastName = order?.user_id?.profile?.personalInfo?.lastName || '';
-  //     const fullName = `${firstName} ${lastName}`.trim();
-
-  //     return {
-  //       ...order.toObject(),
-  //       customerName: fullName,
-  //     };
-  //   });
-  // }
-
   async getOrderById(orderId) {
     const order = await orderRepository.findById(orderId);
     if (!order) {
@@ -159,28 +144,47 @@ class OrderService {
     const skip = (page - 1) * limit;
     const query = {};
 
-    // Validate if the search string is a valid ObjectId before applying it
     if (search && mongoose.Types.ObjectId.isValid(search)) {
       query._id = new mongoose.Types.ObjectId(search);
     }
 
     const [orders, total] = await Promise.all([
-      Order.find(query)
-        .populate({
-          path: 'user_id',
-          populate: {
-            path: 'profile',
-            select: 'personalInfo.firstName personalInfo.lastName',
-          },
-        })
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit),
+      Order.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(), // Important for modifying plain JS objects
       Order.countDocuments(query),
     ]);
 
+    // Get all user_ids
+    const userIds = orders.map((order) => order.user_id).filter(Boolean); // remove nulls
+
+    // Fetch related profiles in one go
+    const profiles = await Profile.find({
+      user_id: { $in: userIds },
+    })
+      .select('user_id personalInfo.firstName personalInfo.lastName')
+      .lean();
+
+    const profileMap = {};
+    profiles.forEach((profile) => {
+      profileMap[profile.user_id.toString()] = profile;
+    });
+
+    const enrichedOrders = orders.map((order) => {
+      let customerName = 'Unknown';
+      const profile = profileMap[order.user_id?.toString()];
+      if (profile?.personalInfo) {
+        const first = profile.personalInfo.firstName || '';
+        const last = profile.personalInfo.lastName || '';
+        customerName = `${first} ${last}`.trim();
+      }
+
+      return {
+        ...order,
+        customerName,
+      };
+    });
+
     return {
-      orders,
+      orders: enrichedOrders,
       total,
       page,
       limit,
