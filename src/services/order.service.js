@@ -149,7 +149,7 @@ class OrderService {
     }
 
     const [orders, total] = await Promise.all([
-      Order.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(), // Important for modifying plain JS objects
+      Order.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
       Order.countDocuments(query),
     ]);
 
@@ -160,7 +160,9 @@ class OrderService {
     const profiles = await Profile.find({
       user_id: { $in: userIds },
     })
-      .select('user_id personalInfo.firstName personalInfo.lastName')
+      .select(
+        'user_id personalInfo.firstName personalInfo.lastName personalInfo.phone personalInfo.email'
+      )
       .lean();
 
     const profileMap = {};
@@ -170,16 +172,23 @@ class OrderService {
 
     const enrichedOrders = orders.map((order) => {
       let customerName = 'Unknown';
+      let phone = '';
+      let email = '';
+
       const profile = profileMap[order.user_id?.toString()];
       if (profile?.personalInfo) {
         const first = profile.personalInfo.firstName || '';
         const last = profile.personalInfo.lastName || '';
+        phone = profile.personalInfo.phone || '';
+        email = profile.personalInfo.email || '';
         customerName = `${first} ${last}`.trim();
       }
 
       return {
         ...order,
         customerName,
+        phone,
+        email,
       };
     });
 
