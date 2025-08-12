@@ -31,42 +31,6 @@ class AuthService {
     return safeUser;
   }
 
-  // async loginUser(email, password) {
-  //   const user = await userRepository.findByEmail(email);
-  //   if (!user) {
-  //     throw new ApiError(401, 'Invalid email or password');
-  //   }
-
-  //   const isPasswordValid = await bcrypt.compare(password, user.password);
-  //   if (!isPasswordValid) {
-  //     throw new ApiError(401, 'Invalid email or password');
-  //   }
-
-  //   const payload = {
-  //     id: user._id,
-  //     email: user.email,
-  //     role: user.role,
-  //   };
-
-  //   const token = jwt.sign(payload, process.env.JWT_SECRET, {
-  //     expiresIn: '7d',
-  //   });
-
-  //   const { password: _, ...safeUser } = user.toObject();
-
-  //   return {
-  //     token,
-  //     user: {
-  //       id: safeUser._id,
-  //       email: safeUser.email,
-  //       role: safeUser.role,
-  //       firstName: safeUser.firstName,
-  //       lastName: safeUser.lastName,
-  //       phone: safeUser.phone,
-  //     },
-  //   };
-  // }
-
   // ✅ Admin Login with email or phone + password
   async adminLogin(identifier, password) {
     const user = await userRepository.findByEmailOrPhone(identifier);
@@ -103,28 +67,6 @@ class AuthService {
       },
     };
   }
-
-  // async getAllUsers() {
-  //   const users = await userRepository.findAll();
-
-  //   return users.map((user) => {
-  //     const fromUser = `${user.firstName || ''} ${user.lastName || ''}`.trim();
-  //     const fromProfile = `${user.profile?.personalInfo?.firstName || ''} ${
-  //       user.profile?.personalInfo?.lastName || ''
-  //     }`.trim();
-
-  //     return {
-  //       _id: user._id,
-  //       email: user.email,
-  //       phone: user.phone,
-  //       role: user.role,
-  //       isVerified: user.isVerified,
-  //       fullName: fromUser || fromProfile || 'N/A',
-  //       createdAt: user.createdAt,
-  //       updatedAt: user.updatedAt,
-  //     };
-  //   });
-  // }
 
   async getAllUsers({ page = 1, limit = 10, search = '' }) {
     page = parseInt(page);
@@ -313,6 +255,10 @@ class AuthService {
     }
 
     return { message: 'OTP resent successfully' };
+  }
+
+  async updateDeviceToken(userId, deviceToken) {
+    await userRepository.updateById(userId, { deviceToken });
   }
 }
 

@@ -44,11 +44,7 @@ router.post('/resend-otp', authController.resendOtp);
 router.put(
   '/users/device-token',
   authMiddleware.authenticate,
-  async (req, res) => {
-    const { deviceToken } = req.body;
-    await User.findByIdAndUpdate(req.user.id, { deviceToken });
-    res.status(200).json({ message: 'Device token updated' });
-  }
+  authController.updateDeviceToken
 );
 
 module.exports = router;

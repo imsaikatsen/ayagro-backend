@@ -135,6 +135,15 @@ class AuthController {
       next(err);
     }
   }
+
+  async updateDeviceToken(req, res, next) {
+    try {
+      await authService.updateDeviceToken(req.user.id, req.body.deviceToken);
+      res.status(200).json({ message: 'Device token updated' });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = new AuthController();
