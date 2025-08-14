@@ -24,7 +24,7 @@ class OrderService {
     const fullName = `${firstName} ${lastName}`.trim();
 
     const orderObj = order.toObject();
-    delete orderObj.user_id.profile; // Remove profile to keep API clean
+    delete orderObj.user_id.profile;
 
     return {
       ...orderObj, // Convert Mongoose doc to plain JS object

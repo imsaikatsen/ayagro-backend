@@ -138,8 +138,7 @@ class checkoutService {
       const items = await orderItemRepository.findByOrderId(order._id);
 
       const formattedItems = items.map((item) => {
-        const product = item.product_id;
-
+        const product = item.product_id || {};
         const quantity = item.quantity;
         const unitPrice = item.price;
         const totalInvestment = quantity * unitPrice;
@@ -147,18 +146,20 @@ class checkoutService {
         const minRate = product.earningRateMin || 0;
         const maxRate = product.earningRateMax || 0;
 
+        // Business rounding
         const netReturnMin = Math.floor(totalInvestment * (minRate / 100));
         const netReturnMax = Math.ceil(totalInvestment * (maxRate / 100));
+
         const totalReturnMin = totalInvestment + netReturnMin;
         const totalReturnMax = totalInvestment + netReturnMax;
 
         return {
-          productId: product._id,
-          productName: product.name,
+          productId: product._id || null,
+          productName: product.name || 'Unknown Product',
           price: unitPrice,
           quantity,
           totalInvestment,
-          duration: product.duration,
+          duration: product.duration || 'N/A',
           earningRateMin: minRate,
           earningRateMax: maxRate,
           profitSimulation: {
@@ -167,7 +168,7 @@ class checkoutService {
             totalReturnMin,
             totalReturnMax,
           },
-          location: product.location,
+          location: product.location || 'Unknown',
           productImage: product.productImage || null,
         };
       });
