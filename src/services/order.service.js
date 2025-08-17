@@ -146,6 +146,8 @@ class OrderService {
 
     if (search && mongoose.Types.ObjectId.isValid(search)) {
       query._id = new mongoose.Types.ObjectId(search);
+    } else if (!isNaN(search)) {
+      query.orderNumber = parseInt(search, 10);
     }
 
     const [orders, total] = await Promise.all([

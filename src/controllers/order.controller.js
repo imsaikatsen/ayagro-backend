@@ -6,8 +6,6 @@ class OrderController {
     try {
       const orderData = req.body;
       orderData.user_id = req.user.id;
-      console.log('Creating order for user:', req.user?.id);
-
       const newOrder = await orderService.createOrder(orderData);
       res.status(201).json({
         message: 'Order created successfully',

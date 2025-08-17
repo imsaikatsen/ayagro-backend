@@ -25,6 +25,12 @@ const orderSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+
+    orderNumber: {
+      type: Number,
+      unique: true,
+      index: true,
+    },
   },
   { timestamps: true }
 );

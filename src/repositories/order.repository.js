@@ -1,8 +1,22 @@
+const mongoose = require('mongoose');
 const Order = require('../models/order.model');
+const Counter = require('../models/counter.model');
+const User = require('../models/user.model'); // for search
 
 class OrderRepository {
   async create(orderData) {
-    return await Order.create(orderData);
+    const counter = await Counter.findOneAndUpdate(
+      { name: 'order' },
+      { $inc: { seq: 1 } },
+      { new: true, upsert: true }
+    );
+
+    const orderNumber = counter.seq;
+
+    return await Order.create({
+      ...orderData,
+      orderNumber,
+    });
   }
 
   async findAll() {
@@ -54,6 +68,8 @@ class OrderRepository {
       // Check if search is a valid ObjectId (full ID search)
       if (mongoose.Types.ObjectId.isValid(search)) {
         query._id = search;
+      } else if (!isNaN(search)) {
+        query.orderNumber = parseInt(search, 10);
       } else {
         // Search user by profile names or email to get userIds
         const users = await User.find({

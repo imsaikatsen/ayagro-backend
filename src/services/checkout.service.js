@@ -90,8 +90,8 @@ class checkoutService {
     try {
       const user = await User.findById(userId);
       if (user?.phone) {
-        const message = `Your project has been booked successfully. Thanks for stay with Ayagro . Order ID: ${order._id}`;
-        console.log('📤 Sending SMS to:', user.phone, message);
+        const formattedOrderId = order.orderNumber.toString().padStart(4, '0');
+        const message = `Your project has been booked successfully.Thanks for stay with Ayagro.Order ID: ${formattedOrderId}`;
         await sendSMS(user.phone, message);
       }
     } catch (smsErr) {
@@ -175,6 +175,7 @@ class checkoutService {
 
       result.push({
         orderId: order._id,
+        orderNumber: order.orderNumber?.toString().padStart(4, '0') || null,
         status: order.orderStatus,
         paymentStatus: order.paymentStatus,
         paymentMethod: order.paymentMethod,
