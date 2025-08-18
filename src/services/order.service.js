@@ -8,9 +8,17 @@ const Product = require('../models/product.model');
 const Profile = require('../models/profile.model');
 const User = require('../models/user.model');
 const mongoose = require('mongoose');
+const Counter = require('../models/counter.model');
 
 class OrderService {
   async createOrder(data) {
+    const counter = await Counter.findOneAndUpdate(
+      { name: 'order' },
+      { $inc: { seq: 1 } },
+      { new: true, upsert: true, setDefaultsOnInsert: true }
+    );
+
+    data.orderNumber = counter?.seq || 1;
     return await orderRepository.create(data);
   }
 
@@ -144,10 +152,22 @@ class OrderService {
     const skip = (page - 1) * limit;
     const query = {};
 
-    if (search && mongoose.Types.ObjectId.isValid(search)) {
-      query._id = new mongoose.Types.ObjectId(search);
-    } else if (!isNaN(search)) {
-      query.orderNumber = parseInt(search, 10);
+    if (search) {
+      if (!isNaN(search)) {
+        // search by orderNumber
+        query.orderNumber = Number(search);
+      } else {
+        // search by customerName (profile firstName/lastName)
+        const profiles = await Profile.find({
+          $or: [
+            { 'personalInfo.firstName': { $regex: search, $options: 'i' } },
+            { 'personalInfo.lastName': { $regex: search, $options: 'i' } },
+          ],
+        }).select('user_id');
+
+        const userIds = profiles.map((p) => p.user_id);
+        query.user_id = { $in: userIds };
+      }
     }
 
     const [orders, total] = await Promise.all([

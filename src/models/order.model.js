@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema(
   {
+    orderNumber: {
+      type: Number,
+      unique: true,
+    },
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
@@ -24,12 +28,6 @@ const orderSchema = new mongoose.Schema(
     proofOfPayment: {
       type: String,
       default: null,
-    },
-
-    orderNumber: {
-      type: Number,
-      unique: true,
-      index: true,
     },
   },
   { timestamps: true }
