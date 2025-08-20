@@ -22,11 +22,22 @@ const orderSchema = new mongoose.Schema(
     },
     orderStatus: {
       type: String,
-      enum: ['booked', 'completed', 'cancelled'],
+      enum: ['booked', 'active', 'completed', 'cancelled'],
       default: 'booked',
     },
     proofOfPayment: {
       type: String,
+      default: null,
+    },
+
+    activationDate: { type: Date, default: null },
+
+    profitDisbursed: {
+      type: Boolean,
+      default: false,
+    },
+    profitDisbursedAt: {
+      type: Date,
       default: null,
     },
   },

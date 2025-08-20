@@ -124,6 +124,78 @@ class checkoutService {
     return true;
   }
 
+  // async getUserOrders(userId, page, limit) {
+  //   const skip = (page - 1) * limit;
+
+  //   const [orders, total] = await Promise.all([
+  //     orderRepository.findOrdersByUserPaginated(userId, skip, limit),
+  //     orderRepository.countOrdersByUser(userId),
+  //   ]);
+
+  //   const result = [];
+
+  //   for (const order of orders) {
+  //     const items = await orderItemRepository.findByOrderId(order._id);
+
+  //     const formattedItems = items.map((item) => {
+  //       const product = item.product_id || {};
+  //       const quantity = item.quantity;
+  //       const unitPrice = item.price;
+  //       const totalInvestment = quantity * unitPrice;
+
+  //       const minRate = product.earningRateMin || 0;
+  //       const maxRate = product.earningRateMax || 0;
+
+  //       // Business rounding
+  //       const netReturnMin = Math.floor(totalInvestment * (minRate / 100));
+  //       const netReturnMax = Math.ceil(totalInvestment * (maxRate / 100));
+
+  //       const totalReturnMin = totalInvestment + netReturnMin;
+  //       const totalReturnMax = totalInvestment + netReturnMax;
+
+  //       return {
+  //         productId: product._id || null,
+  //         productName: product.name || 'Unknown Product',
+  //         price: unitPrice,
+  //         quantity,
+  //         totalInvestment,
+  //         duration: product.duration || 'N/A',
+  //         earningRateMin: minRate,
+  //         earningRateMax: maxRate,
+  //         profitSimulation: {
+  //           min: netReturnMin,
+  //           max: netReturnMax,
+  //           totalReturnMin,
+  //           totalReturnMax,
+  //         },
+  //         location: product.location || 'Unknown',
+  //         productImage: product.productImage || null,
+  //       };
+  //     });
+
+  //     result.push({
+  //       orderId: order._id,
+  //       orderNumber: order.orderNumber?.toString().padStart(4, '0') || null,
+  //       status: order.orderStatus,
+  //       paymentStatus: order.paymentStatus,
+  //       paymentMethod: order.paymentMethod,
+  //       totalAmount: order.totalAmount,
+  //       createdAt: order.createdAt,
+  //       items: formattedItems,
+  //     });
+  //   }
+
+  //   return {
+  //     data: result,
+  //     pagination: {
+  //       totalOrders: total,
+  //       currentPage: page,
+  //       totalPages: Math.ceil(total / limit),
+  //       pageSize: limit,
+  //     },
+  //   };
+  // }
+
   async getUserOrders(userId, page, limit) {
     const skip = (page - 1) * limit;
 
@@ -133,6 +205,14 @@ class checkoutService {
     ]);
 
     const result = [];
+
+    // --- summary counters ---
+    let summary = {
+      runningFarms: { pending: 0, active: 0 },
+      maturedFarms: { total: 0, earningsPending: 0, profitDisbursed: 0 },
+    };
+
+    const now = new Date();
 
     for (const order of orders) {
       const items = await orderItemRepository.findByOrderId(order._id);
@@ -146,12 +226,25 @@ class checkoutService {
         const minRate = product.earningRateMin || 0;
         const maxRate = product.earningRateMax || 0;
 
-        // Business rounding
         const netReturnMin = Math.floor(totalInvestment * (minRate / 100));
         const netReturnMax = Math.ceil(totalInvestment * (maxRate / 100));
 
         const totalReturnMin = totalInvestment + netReturnMin;
         const totalReturnMax = totalInvestment + netReturnMax;
+
+        // --- calculate maturity date ---
+        let maturityDate = null;
+        let isMatured = false;
+        if (product.duration && product.duration.includes('month')) {
+          const months = parseInt(product.duration);
+          // Use activationDate if available, otherwise fallback to createdAt
+          const startDate = order.activationDate || order.createdAt;
+          maturityDate = new Date(startDate);
+          maturityDate.setMonth(maturityDate.getMonth() + months);
+          if (now >= maturityDate) {
+            isMatured = true;
+          }
+        }
 
         return {
           productId: product._id || null,
@@ -170,8 +263,53 @@ class checkoutService {
           },
           location: product.location || 'Unknown',
           productImage: product.productImage || null,
+          maturityDate,
+          isMatured,
         };
       });
+
+      // --- decide farm status for summary ---
+      let farmStatus = null;
+
+      // Pending (either booked+unpaid OR active+unpaid)
+      if (
+        (order.orderStatus === 'booked' && order.paymentStatus === 'Unpaid') ||
+        (order.orderStatus === 'active' && order.paymentStatus === 'Unpaid') ||
+        (order.orderStatus === 'completed' && order.paymentStatus === 'Unpaid')
+      ) {
+        farmStatus = 'pending';
+        summary.runningFarms.pending++;
+      }
+
+      // Active (booked+paid OR active+paid)
+      else if (
+        (order.orderStatus === 'booked' && order.paymentStatus === 'Paid') ||
+        (order.orderStatus === 'active' && order.paymentStatus === 'Paid')
+      ) {
+        farmStatus = 'active';
+        summary.runningFarms.active++;
+
+        // check maturity for active farms
+        let isMaturedOrder = formattedItems.some((i) => i.isMatured);
+        if (isMaturedOrder) {
+          summary.maturedFarms.total++;
+          if (order.profitDisbursed) summary.maturedFarms.profitDisbursed++;
+          else summary.maturedFarms.earningsPending++;
+        }
+      }
+
+      // Completed → matured
+      else if (order.orderStatus === 'completed') {
+        farmStatus = 'matured';
+        summary.maturedFarms.total++;
+        if (order.profitDisbursed) summary.maturedFarms.profitDisbursed++;
+        else summary.maturedFarms.earningsPending++;
+      }
+
+      // Cancelled
+      else if (order.orderStatus === 'cancelled') {
+        farmStatus = 'cancelled';
+      }
 
       result.push({
         orderId: order._id,
@@ -181,11 +319,14 @@ class checkoutService {
         paymentMethod: order.paymentMethod,
         totalAmount: order.totalAmount,
         createdAt: order.createdAt,
+        profitDisbursed: order.profitDisbursed || false,
+        farmStatus, // 👈 this shows whether it is pending / active / matured / cancelled
         items: formattedItems,
       });
     }
 
     return {
+      summary,
       data: result,
       pagination: {
         totalOrders: total,
