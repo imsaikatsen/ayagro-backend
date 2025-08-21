@@ -91,7 +91,7 @@ class checkoutService {
       const user = await User.findById(userId);
       if (user?.phone) {
         const formattedOrderId = order.orderNumber.toString().padStart(4, '0');
-        const message = `Your project has been booked successfully.Thanks for stay with Ayagro.Order ID: ${formattedOrderId}`;
+        const message = `Your project has been booked successfully. Thanks for stay with Ayagro! Order ID: ${formattedOrderId}`;
         await sendSMS(user.phone, message);
       }
     } catch (smsErr) {

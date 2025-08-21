@@ -1,13 +1,13 @@
+const mongoose = require('mongoose');
 const orderRepository = require('../repositories/order.repository');
 const ApiError = require('../utils/apiError');
 const sendPushNotification = require('../utils/sendPushNotification');
-
+const sendSMS = require('../utils/sendSMS');
 const Order = require('../models/order.model');
 const OrderItem = require('../models/order-items.model');
 const Product = require('../models/product.model');
 const Profile = require('../models/profile.model');
 const User = require('../models/user.model');
-const mongoose = require('mongoose');
 const Counter = require('../models/counter.model');
 
 class OrderService {
@@ -123,12 +123,38 @@ class OrderService {
     return;
   }
 
+  // async attachProof(orderId, filename) {
+  //   return await Order.findByIdAndUpdate(
+  //     orderId,
+  //     { proofOfPayment: filename },
+  //     { new: true }
+  //   );
+  // }
+
   async attachProof(orderId, filename) {
-    return await Order.findByIdAndUpdate(
+    const order = await Order.findByIdAndUpdate(
       orderId,
       { proofOfPayment: filename },
       { new: true }
     );
+
+    if (!order) {
+      throw new Error('Order not found');
+    }
+
+    // Fetch user and send SMS
+    const user = await User.findById(order.user_id);
+    if (user?.phone) {
+      const formattedOrderId = order.orderNumber.toString().padStart(4, '0');
+      const message = `We have received your proof of payment. Thanks for staying with Ayagro! Order ID: ${formattedOrderId}`;
+      try {
+        await sendSMS(user.phone, message);
+      } catch (smsErr) {
+        console.error('❌ Failed to send proof SMS:', smsErr.message);
+      }
+    }
+
+    return order;
   }
 
   async getOrderDetails(orderId, userId) {
