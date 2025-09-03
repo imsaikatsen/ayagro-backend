@@ -10,7 +10,7 @@ const upload = require('../config/multerProofConfig');
 router.post(
   '/',
   authMiddleware.authenticate,
-  authMiddleware.authorizeRoles('admin'),
+  authMiddleware.authorizeRoles('admin', 'super_admin'),
   validate(orderValidationSchema.createOrderSchema),
   orderController.create
 );
@@ -32,14 +32,14 @@ router.get(
 router.put(
   '/:id',
   authMiddleware.authenticate,
-  authMiddleware.authorizeRoles('admin'),
+  authMiddleware.authorizeRoles('admin', 'super_admin'),
   orderController.update
 );
 
 router.delete(
   '/:id',
   authMiddleware.authenticate,
-  authMiddleware.authorizeRoles('admin'),
+  authMiddleware.authorizeRoles('admin', 'super_admin'),
   orderController.delete
 );
 

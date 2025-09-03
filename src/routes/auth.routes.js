@@ -19,21 +19,21 @@ router.post('/admin-login', authController.adminLogin); // Admin login by email/
 router.get(
   '/users',
   authMiddleware.authenticate,
-  authMiddleware.authorizeRoles('admin'),
+  authMiddleware.authorizeRoles('super_admin'),
   authController.getUserList
 );
 
 router.put(
   '/users/:id',
   authMiddleware.authenticate,
-  authMiddleware.authorizeRoles('admin'),
+  authMiddleware.authorizeRoles('super_admin'),
   authController.updateUser
 );
 
 router.delete(
   '/users/:id',
   authMiddleware.authenticate,
-  authMiddleware.authorizeRoles('admin'),
+  authMiddleware.authorizeRoles('super_admin'),
   authController.deleteUser
 );
 

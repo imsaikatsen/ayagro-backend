@@ -24,10 +24,17 @@ const userSchema = new mongoose.Schema(
     lastName: {
       type: String,
     },
+    // role: {
+    //   type: String,
+    //   default: 'customer',
+    // },
+
     role: {
       type: String,
+      enum: ['customer', 'manager', 'admin', 'super_admin'],
       default: 'customer',
     },
+    modules: { type: [String], default: [] },
     isVerified: {
       type: Boolean,
       default: false,

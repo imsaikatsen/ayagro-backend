@@ -11,7 +11,7 @@ const productValidationSchema = require('../validations/product.validation');
 router.post(
   '/',
   authMiddleware.authenticate,
-  authMiddleware.authorizeRoles('admin'),
+  authMiddleware.authorizeRoles('admin', 'super_admin'),
   upload.single('productImage'),
   validate(productValidationSchema.createProductSchema),
   productController.create
@@ -22,14 +22,14 @@ router.get('/:id', productController.getById);
 router.put(
   '/:id',
   authMiddleware.authenticate,
-  authMiddleware.authorizeRoles('admin'),
+  authMiddleware.authorizeRoles('admin', 'super_admin'),
   upload.single('productImage'),
   productController.update
 );
 router.delete(
   '/:id',
   authMiddleware.authenticate,
-  authMiddleware.authorizeRoles('admin'),
+  authMiddleware.authorizeRoles('admin', 'super_admin'),
   productController.delete
 );
 

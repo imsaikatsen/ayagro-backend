@@ -34,8 +34,12 @@ class AuthService {
   // ✅ Admin Login with email or phone + password
   async adminLogin(identifier, password) {
     const user = await userRepository.findByEmailOrPhone(identifier);
-    if (!user || user.role !== 'admin') {
-      throw new ApiError(403, 'Only admin can login here');
+    //  const user = await userRepository.findByEmailOrPhone(identifier);
+    if (!user || !['super_admin', 'admin', 'manager'].includes(user.role)) {
+      throw new ApiError(
+        403,
+        'Access denied: Only super admin or admin or manager can login here'
+      );
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);

@@ -29,18 +29,6 @@ class AuthController {
     }
   }
 
-  // async getUserList(req, res, next) {
-  //   try {
-  //     const users = await authService.getAllUsers();
-  //     res.status(200).json({
-  //       message: 'User list fetched successfully',
-  //       data: users,
-  //     });
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // }
-
   async getUserList(req, res, next) {
     try {
       const { page = 1, limit = 10, search = '' } = req.query;

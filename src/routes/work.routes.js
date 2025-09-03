@@ -11,7 +11,7 @@ const { workSchema } = require('../validations/work.validation');
 router.post(
   '/',
   authMiddleware.authenticate,
-  authMiddleware.authorizeRoles('admin'),
+  authMiddleware.authorizeRoles('admin', 'manager'),
   upload.single('image'),
   validate(workSchema),
   workController.create
@@ -25,7 +25,7 @@ router.get('/:id', workController.getById);
 router.put(
   '/:id',
   authMiddleware.authenticate,
-  authMiddleware.authorizeRoles('admin'),
+  authMiddleware.authorizeRoles('admin', 'manager'),
   upload.single('image'),
   workController.update
 );
@@ -34,7 +34,7 @@ router.put(
 router.delete(
   '/:id',
   authMiddleware.authenticate,
-  authMiddleware.authorizeRoles('admin'),
+  authMiddleware.authorizeRoles('admin', 'manager'),
   workController.delete
 );
 
