@@ -19,6 +19,7 @@ const faqRoutes = require('./routes/faq.route');
 const headercardRoutes = require('./routes/headerCard.routes');
 const blogRoutes = require('./routes/blog.routes');
 const workRoutes = require('./routes/work.routes');
+const moduleRoutes = require('./routes/module.routes');
 
 const app = express();
 
@@ -86,6 +87,7 @@ app.use('/api/v1/faqs', faqRoutes);
 app.use('/api/v1/header-cards', headercardRoutes);
 app.use('/api/v1/blogs', blogRoutes);
 app.use('/api/v1/works', workRoutes);
+app.use('/api/v1/modules', moduleRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {

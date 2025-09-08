@@ -7,6 +7,7 @@ const ApiError = require('../utils/apiError');
 const OTP = require('../models/otp.model');
 const { generateOtp, getExpiry } = require('../utils/otp.util');
 const { sendOtpToEmail, sendOtpToPhone } = require('../utils/otpSender');
+const moduleModel = require('../models/module.model');
 
 class AuthService {
   async registerUser(userData) {
@@ -33,6 +34,8 @@ class AuthService {
 
   // ✅ Admin Login with email or phone + password
   async adminLogin(identifier, password) {
+    const modules = await moduleModel.find({});
+    const moduleNames = modules.map((m) => m.name);
     const user = await userRepository.findByEmailOrPhone(identifier);
     //  const user = await userRepository.findByEmailOrPhone(identifier);
     if (!user || !['super_admin', 'admin', 'manager'].includes(user.role)) {
@@ -68,6 +71,10 @@ class AuthService {
         firstName: safeUser.firstName,
         lastName: safeUser.lastName,
         phone: safeUser.phone,
+        modules:
+          safeUser.role === 'super_admin'
+            ? moduleNames
+            : safeUser.modules || [],
       },
     };
   }
@@ -94,6 +101,7 @@ class AuthService {
         phone: user.phone,
         role: user.role,
         isVerified: user.isVerified,
+        modules: user.modules,
         fullName: fromUser || fromProfile || 'N/A',
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,

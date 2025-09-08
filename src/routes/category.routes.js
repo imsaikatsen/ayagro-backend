@@ -15,7 +15,7 @@ const upload = require('../config/multerCategoryConfig');
 router.post(
   '/',
   authMiddleware.authenticate,
-  authMiddleware.authorizeRoles('admin'),
+  authMiddleware.authorizeRoles('admin', 'super_admin'),
   upload.single('categoryImage'),
   validate(createCategorySchema),
   categoryController.create
@@ -31,7 +31,7 @@ router.get('/:id', authMiddleware.authenticate, categoryController.getById);
 router.put(
   '/:id',
   authMiddleware.authenticate,
-  authMiddleware.authorizeRoles('admin'),
+  authMiddleware.authorizeRoles('admin', 'super_admin'),
   upload.single('categoryImage'),
   validate(updateCategorySchema),
   categoryController.update
@@ -41,7 +41,7 @@ router.put(
 router.delete(
   '/:id',
   authMiddleware.authenticate,
-  authMiddleware.authorizeRoles('admin'),
+  authMiddleware.authorizeRoles('admin', 'super_admin'),
   categoryController.delete
 );
 
