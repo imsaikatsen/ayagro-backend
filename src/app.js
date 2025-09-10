@@ -20,6 +20,7 @@ const headercardRoutes = require('./routes/headerCard.routes');
 const blogRoutes = require('./routes/blog.routes');
 const workRoutes = require('./routes/work.routes');
 const moduleRoutes = require('./routes/module.routes');
+const farmerRoutes = require('./routes/farmer.routes');
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use(
       'http://localhost:5174',
       'https://test.asole.xyz',
       'https://ayagro.asia',
+      'https://www.ayagro.asia',
     ],
     credentials: true,
   })
@@ -73,6 +75,8 @@ serveWithCORS(app, path.join(__dirname, 'uploads/blogs'), '/uploads/blogs');
 
 serveWithCORS(app, path.join(__dirname, 'uploads/works'), '/uploads/works');
 
+serveWithCORS(app, path.join(__dirname, 'uploads/farmers'), '/uploads/farmers');
+
 // routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/categories', categoryRoutes);
@@ -88,6 +92,7 @@ app.use('/api/v1/header-cards', headercardRoutes);
 app.use('/api/v1/blogs', blogRoutes);
 app.use('/api/v1/works', workRoutes);
 app.use('/api/v1/modules', moduleRoutes);
+app.use('/api/v1/farmers', farmerRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {

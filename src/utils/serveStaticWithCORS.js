@@ -6,11 +6,16 @@ function serveWithCORS(app, staticPath, route) {
   app.use(route, (req, res, next) => {
     const allowedOrigins =
       process.env.NODE_ENV === 'production'
-        ? ['https://test.asole.xyz', 'https://ayagro.asia']
+        ? [
+            'https://test.asole.xyz',
+            'https://ayagro.asia',
+            'https://www.ayagro.asia',
+          ]
         : [
             'http://localhost:5173',
             'http://localhost:5174',
             'https://ayagro.asia',
+            'https://www.ayagro.asia',
           ];
 
     const origin = req.headers.origin;
