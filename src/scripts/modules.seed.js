@@ -13,6 +13,7 @@ const modulesList = [
   { name: 'users', displayName: 'Users' },
   { name: 'headercards', displayName: 'Header Cards' },
   { name: 'works', displayName: 'Works' },
+  { name: 'farmers', displayName: 'farmers' },
 ];
 
 async function seedModules() {
