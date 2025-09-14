@@ -79,6 +79,22 @@ class AuthService {
     };
   }
 
+  async getCurrentUser(userId) {
+    const user = await userRepository.findById(userId);
+
+    if (!user) return null;
+
+    const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim();
+
+    return {
+      id: user._id,
+      email: user.email,
+      phone: user.phone || 'N/A',
+      role: user.role,
+      fullName: fullName || 'N/A',
+    };
+  }
+
   async getAllUsers({ page = 1, limit = 10, search = '' }) {
     page = parseInt(page);
     limit = parseInt(limit);

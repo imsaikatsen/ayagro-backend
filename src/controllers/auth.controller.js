@@ -29,6 +29,23 @@ class AuthController {
     }
   }
 
+  async getCurrentAdmin(req, res, next) {
+    try {
+      const user = await authService.getCurrentUser(req.user.id);
+
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      res.status(200).json({
+        message: 'Current user fetched successfully',
+        data: user,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getUserList(req, res, next) {
     try {
       const { page = 1, limit = 10, search = '' } = req.query;

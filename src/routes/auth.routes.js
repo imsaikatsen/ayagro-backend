@@ -12,7 +12,12 @@ const router = express.Router();
 
 router.post('/register', validate(registerSchema), authController.register);
 router.post('/admin-login', authController.adminLogin); // Admin login by email/phone
-// router.post('/login', authController.login);
+
+router.get(
+  '/admin/me',
+  authMiddleware.authenticate, // ✅ must be logged in
+  authController.getCurrentAdmin
+);
 
 //...... USER ..........//
 
