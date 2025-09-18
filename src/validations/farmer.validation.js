@@ -3,7 +3,12 @@ const Joi = require('joi');
 const farmerSchema = Joi.object({
   // Personal Info
   name: Joi.string().trim().min(3).max(255).required(),
-  address: Joi.string().trim().required(),
+  address: Joi.object({
+    village: Joi.string().required(),
+    post: Joi.string().required(),
+    police_station: Joi.string().required(),
+    district: Joi.string().required(),
+  }).required(),
   phone: Joi.string()
     .pattern(/^[0-9]{10,15}$/)
     .required(),

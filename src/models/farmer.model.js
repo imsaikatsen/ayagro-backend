@@ -4,7 +4,12 @@ const farmerSchema = new mongoose.Schema(
   {
     // Personal Info
     name: { type: String, required: true },
-    address: { type: String, required: true },
+    address: {
+      village: { type: String, required: true },
+      post: { type: String, required: true },
+      police_station: { type: String, required: true },
+      district: { type: String, required: true },
+    },
     phone: { type: String, required: true },
 
     // Farm Details
