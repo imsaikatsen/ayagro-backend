@@ -10,7 +10,7 @@ const { blogSchema } = require('../validations/blog.validation');
 router.post(
   '/',
   authMiddleware.authenticate,
-  authMiddleware.authorizeRoles('admin'),
+  authMiddleware.authorizeRoles('admin', 'super_admin'),
   upload.single('image'),
   validate(blogSchema),
   blogController.create
@@ -24,7 +24,7 @@ router.get('/:id', blogController.getById);
 router.put(
   '/:id',
   authMiddleware.authenticate,
-  authMiddleware.authorizeRoles('admin'),
+  authMiddleware.authorizeRoles('admin', 'super_admin'),
   upload.single('image'),
   blogController.update
 );
@@ -33,7 +33,7 @@ router.put(
 router.delete(
   '/:id',
   authMiddleware.authenticate,
-  authMiddleware.authorizeRoles('admin'),
+  authMiddleware.authorizeRoles('admin', 'super_admin'),
   blogController.delete
 );
 
