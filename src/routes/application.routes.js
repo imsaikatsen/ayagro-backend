@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const validate = require('../middlewares/validate.middleware');
 const { applicationSchema } = require('../validations/application.validation');
+const authMiddleware = require('../middlewares/auth.middleware');
 const applicationController = require('../controllers/application.controller');
 const uploadCV = require('../config/cvMulterConfig');
 
@@ -15,5 +16,13 @@ router.post(
 
 // Admin gets applications for a job
 router.get('/:jobId', applicationController.getByJob);
+
+// Admin gets all applications
+router.get(
+  '/',
+  authMiddleware.authenticate,
+  authMiddleware.authorizeRoles('admin', 'super_admin'),
+  applicationController.getAllApplications
+);
 
 module.exports = router;

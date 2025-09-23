@@ -8,6 +8,11 @@ class ApplicationService {
   async getApplicationsByJob(jobId) {
     return await applicationRepository.findByJobId(jobId);
   }
+
+  async getAllApplications() {
+    // populate job info (title, department) if needed
+    return await applicationRepository.findAll();
+  }
 }
 
 module.exports = new ApplicationService();

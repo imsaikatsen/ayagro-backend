@@ -26,6 +26,17 @@ class ApplicationController {
       next(err);
     }
   }
+
+  async getAllApplications(req, res, next) {
+    try {
+      const applications = await applicationService.getAllApplications();
+      res
+        .status(200)
+        .json({ message: 'Applications fetched', data: applications });
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 module.exports = new ApplicationController();
