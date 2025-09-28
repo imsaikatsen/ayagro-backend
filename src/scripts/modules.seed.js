@@ -16,6 +16,7 @@ const modulesList = [
   { name: 'farmers', displayName: 'farmers' },
   { name: 'jobs', displayName: 'jobs' },
   { name: 'applications', displayName: 'applications' },
+  { name: 'teams', displayName: 'teams' },
 ];
 
 async function seedModules() {
