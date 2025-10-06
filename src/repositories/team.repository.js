@@ -17,11 +17,11 @@ class TeamRepository {
   async findAll(page = 1, limit = 10) {
     const skip = (page - 1) * limit;
     const members = await Team.find()
-      .sort({ order: 1 }) // always return in order
+      .sort({ order: 1 })
       .skip(skip)
       .limit(limit);
     const total = await Team.countDocuments();
-    return { members, total, page, pages: Math.ceil(total / limit) };
+    return { members, total, page, limit, pages: Math.ceil(total / limit) };
   }
 
   async updateById(id, updateData) {
