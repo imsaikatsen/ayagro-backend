@@ -1,5 +1,5 @@
 const axios = require('axios');
-// const nodemailer = require('nodemailer'); // You forgot to require this
+const nodemailer = require('nodemailer'); // You forgot to require this
 require('dotenv').config(); // Ensure environment variables are loaded
 
 function formatPhone(phone) {
@@ -20,10 +20,21 @@ async function sendOtpToEmail(email, otp) {
   });
 
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from: `"Ayagro Support" <${process.env.EMAIL_USER}>`,
     to: email,
-    subject: 'Your OTP Code',
-    text: `Your OTP is: ${otp}`,
+    subject: 'Your OTP Code ',
+    html: `
+        <div style="font-family:Arial, sans-serif; line-height:1.5;">
+          <h2>Hi there, </h2>
+          <p>Your one-time password (OTP) is:</p>
+          <h1 style="background:#f2f2f2; padding:10px 20px; display:inline-block; border-radius:8px;">
+            ${otp}
+          </h1>
+          <p>This code will expire in <strong>5 minutes</strong>.</p>
+          <br />
+          <p>— Ayagro Security Team</p>
+        </div>
+      `,
   };
 
   await transporter.sendMail(mailOptions);
