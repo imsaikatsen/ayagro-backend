@@ -1,5 +1,5 @@
 const axios = require('axios');
-const nodemailer = require('nodemailer'); // You forgot to require this
+// const nodemailer = require('nodemailer'); // You forgot to require this
 require('dotenv').config(); // Ensure environment variables are loaded
 
 function formatPhone(phone) {
