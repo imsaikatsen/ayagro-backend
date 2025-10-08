@@ -3,7 +3,9 @@ const Joi = require('joi');
 const jobSchema = Joi.object({
   department: Joi.string().trim().min(2).max(100).required(),
   title: Joi.string().trim().min(3).max(255).required(),
-  type: Joi.string().valid('Full-time', 'Part-time', 'Contract').required(),
+  type: Joi.string()
+    .valid('Full-time', 'Part-time', 'Contract', 'Intern')
+    .required(),
   location: Joi.string().trim().allow('', null), // optional
   salary: Joi.string().trim().allow('', null), // optional
   deadline: Joi.date().required(),
