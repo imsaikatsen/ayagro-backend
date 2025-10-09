@@ -35,6 +35,8 @@ app.use(
       'http://localhost:5173',
       'http://localhost:5174',
       'https://test.asole.xyz',
+      'http://asole.xyz',
+      'https://asole.xyz',
       'https://ayagro.asia',
       'https://www.ayagro.asia',
     ],

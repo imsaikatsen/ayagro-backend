@@ -8,6 +8,8 @@ function serveWithCORS(app, staticPath, route) {
       process.env.NODE_ENV === 'production'
         ? [
             'https://test.asole.xyz',
+            'http://asole.xyz',
+            'https://asole.xyz',
             'https://ayagro.asia',
             'https://www.ayagro.asia',
           ]
