@@ -12,7 +12,7 @@ const {
 router.post(
   '/',
   authMiddleware.authenticate,
-  authMiddleware.authorizeRoles('admin'),
+  authMiddleware.authorizeRoles('admin', 'super_admin'),
   validate(createFaqSchema),
   faqController.create
 );
@@ -27,7 +27,7 @@ router.get('/:id', faqController.getById);
 router.put(
   '/:id',
   authMiddleware.authenticate,
-  authMiddleware.authorizeRoles('admin'),
+  authMiddleware.authorizeRoles('admin', 'super_admin'),
   validate(updateFaqSchema),
   faqController.update
 );
@@ -36,7 +36,7 @@ router.put(
 router.delete(
   '/:id',
   authMiddleware.authenticate,
-  authMiddleware.authorizeRoles('admin'),
+  authMiddleware.authorizeRoles('admin', 'super_admin'),
   faqController.delete
 );
 

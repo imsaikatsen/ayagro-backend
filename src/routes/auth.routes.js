@@ -15,7 +15,7 @@ router.post('/admin-login', authController.adminLogin); // Admin login by email/
 
 router.get(
   '/admin/me',
-  authMiddleware.authenticate, // ✅ must be logged in
+  authMiddleware.authenticate,
   authController.getCurrentAdmin
 );
 
