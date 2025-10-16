@@ -30,6 +30,14 @@ const workSchema = new mongoose.Schema(
       type: String, // For image path or YouTube videoId
       required: true,
     },
+    order: {
+      type: Number,
+      default: 0, // default order (can be overridden)
+    },
+    customDate: {
+      type: Date,
+      default: null, // if not provided, stays null
+    },
   },
   { timestamps: true }
 );
