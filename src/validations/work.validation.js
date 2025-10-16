@@ -7,6 +7,8 @@ const workSchema = Joi.object({
   subtitle: Joi.string().trim().min(2).required(),
   description: Joi.string().allow(''),
   mediaType: Joi.string().valid('image', 'video').required(),
+  order: Joi.number().optional(),
+  customDate: Joi.date().optional(),
   //   mediaUrl: Joi.string().required(), // if video → YouTube ID, if image → filename
 });
 

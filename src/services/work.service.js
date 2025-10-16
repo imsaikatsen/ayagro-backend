@@ -4,6 +4,10 @@ const ApiError = require('../utils/apiError');
 
 class WorkService {
   async createWork(data) {
+    if (data.order === undefined) {
+      const lastWork = await workRepository.findLastOrder();
+      data.order = lastWork ? lastWork.order + 1 : 1;
+    }
     return await workRepository.create(data);
   }
 

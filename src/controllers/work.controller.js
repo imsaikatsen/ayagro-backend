@@ -5,7 +5,7 @@ class WorkController {
   async create(req, res, next) {
     try {
       const workData = req.body;
-      if (req.file) workData.mediaUrl = req.file.filename; // For images
+      if (req.file) workData.mediaUrl = req.file.filename;
       const work = await workService.createWork(workData);
       res.status(201).json({ message: 'Work created', data: work });
     } catch (err) {
