@@ -16,8 +16,18 @@ class WorkRepository {
       .sort({ order: 1, customDate: -1, createdAt: -1 })
       .skip(skip)
       .limit(limit);
+
     const total = await Work.countDocuments();
-    return { works, total, page, pages: Math.ceil(total / limit) };
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      message: 'Works fetched successfully',
+      total,
+      page,
+      limit,
+      totalPages,
+      data: { works },
+    };
   }
 
   async updateById(id, updateData) {
