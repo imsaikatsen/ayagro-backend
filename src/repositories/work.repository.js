@@ -13,7 +13,7 @@ class WorkRepository {
   async findAll(page = 1, limit = 10) {
     const skip = (page - 1) * limit;
     const works = await Work.find()
-      .sort({ order: 1, customDate: -1, createdAt: -1 })
+      .sort({ order: -1, createdAt: -1 })
       .skip(skip)
       .limit(limit);
 
