@@ -17,7 +17,8 @@ class WorkController {
     try {
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 10;
-      const works = await workService.getAllWorks(page, limit);
+      const region = req.query.region || null;
+      const works = await workService.getAllWorks(page, limit, region);
       res.status(200).json({ message: 'Works fetched', data: works });
     } catch (err) {
       next(err);

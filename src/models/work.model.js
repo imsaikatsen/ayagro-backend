@@ -31,8 +31,8 @@ const workSchema = new mongoose.Schema(
       required: true,
     },
     order: {
-      type: String,
-      default: 0, // default order (can be overridden)
+      type: Number,
+      default: 0,
     },
     customDate: {
       type: Date,
