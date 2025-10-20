@@ -10,9 +10,11 @@ class WorkRepository {
     return await Work.findById(id);
   }
 
-  async findAll(page = 1, limit = 10) {
+  async findAll(page = 1, limit = 10, region = null) {
     const skip = (page - 1) * limit;
-    const works = await Work.find()
+    const query = region ? { region } : {};
+
+    const works = await Work.find(query)
       .sort({ order: -1, createdAt: -1 })
       .skip(skip)
       .limit(limit);
@@ -42,8 +44,8 @@ class WorkRepository {
     return await Work.findByIdAndDelete(id);
   }
 
-  async findLastOrder() {
-    return await Work.findOne().sort({ order: -1 });
+  async findLastOrder(region) {
+    return await Work.findOne({ region }).sort({ order: -1 });
   }
 }
 

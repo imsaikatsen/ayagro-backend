@@ -5,14 +5,14 @@ const ApiError = require('../utils/apiError');
 class WorkService {
   async createWork(data) {
     if (data.order === undefined) {
-      const lastWork = await workRepository.findLastOrder();
+      const lastWork = await workRepository.findLastOrder(data.region);
       data.order = lastWork ? lastWork.order + 1 : 1;
     }
     return await workRepository.create(data);
   }
 
-  async getAllWorks(page, limit) {
-    return await workRepository.findAll(page, limit);
+  async getAllWorks(page, limit, region) {
+    return await workRepository.findAll(page, limit, region);
   }
 
   async getWorkById(id) {
