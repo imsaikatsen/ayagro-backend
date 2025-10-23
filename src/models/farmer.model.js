@@ -2,6 +2,12 @@ const mongoose = require('mongoose');
 
 const farmerSchema = new mongoose.Schema(
   {
+    projectIds: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
+      },
+    ],
     // Personal Info
     name: { type: String, required: true },
     address: {

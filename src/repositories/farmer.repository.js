@@ -12,16 +12,59 @@ class FarmerRepository {
   async findAll(page = 1, limit = 10) {
     const skip = (page - 1) * limit;
     const farmers = await Farmer.find()
-      .populate('addedBy', 'name email role') // populate who added the farmer
+      .populate('addedBy', 'name email role')
+      .populate(
+        'projectIds',
+        'name status duration location price return earningRateMin earningRateMax'
+      )
       .skip(skip)
       .limit(limit)
-      .sort({ createdAt: -1 }); // newest first
+      .sort({ createdAt: -1 });
+
+    const formattedFarmers = farmers.map((farmer) => {
+      const f = farmer.toObject();
+      f.products = f.projectIds; // rename field
+      delete f.projectIds; // remove original
+
+      f.products = f.products.map((product) => {
+        let maturityDate = null;
+
+        if (product.status === 'live') {
+          const startDate = product.startDate
+            ? new Date(product.startDate)
+            : new Date();
+          const duration = parseInt(product.duration.split(' ')[0]);
+          maturityDate = new Date(startDate);
+          maturityDate.setMonth(maturityDate.getMonth() + duration);
+          product.maturityDate = maturityDate.toISOString().split('T')[0];
+        } else {
+          product.maturityDate = null;
+        }
+
+        // 🔹 Ensure updateText exists
+        if (!product.updateText) product.updateText = 'No updates yet';
+
+        // 🔹 Optional: auto status update if maturity passed
+        const now = new Date();
+        if (
+          maturityDate &&
+          product.status !== 'completed' &&
+          now > maturityDate
+        ) {
+          product.status = 'completed';
+        }
+
+        return product;
+      });
+      return f;
+    });
+
     const total = await Farmer.countDocuments();
     return {
       total,
       page,
       limit,
-      data: farmers,
+      data: formattedFarmers,
     };
   }
 

@@ -110,6 +110,11 @@ class ProductService {
       }
     }
 
+    // 🔹 Auto-set startDate if project status becomes live for the first time
+    if (updateData.status === 'live' && !existing.startDate) {
+      updateData.startDate = new Date();
+    }
+
     const updated = await productRepository.updateById(productId, updateData);
     if (!updated) {
       throw new ApiError(500, 'Failed to update product');

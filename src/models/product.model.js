@@ -45,6 +45,11 @@ const productSchema = new mongoose.Schema(
     },
     earningRateMin: { type: Number },
     earningRateMax: { type: Number },
+    startDate: { type: Date },
+    updateText: {
+      type: String,
+      trim: true,
+    },
   },
   { timestamps: true }
 );
