@@ -32,7 +32,7 @@ class AuthService {
     return safeUser;
   }
 
-  // ✅ Admin Login with email or phone + password
+  // Admin Login with email or phone + password
   async adminLogin(identifier, password) {
     const modules = await moduleModel.find({});
     const moduleNames = modules.map((m) => m.name);
@@ -75,6 +75,46 @@ class AuthService {
           safeUser.role === 'super_admin'
             ? moduleNames
             : safeUser.modules || [],
+      },
+    };
+  }
+
+  // Investor Login with email or phone + password
+  async premiumInvestorLogin(identifier, password) {
+    const user = await userRepository.findByEmailOrPhone(identifier);
+    if (!user || !['super_admin', 'premium_investor'].includes(user.role)) {
+      throw new ApiError(
+        403,
+        'Access denied: Only super admin or premium_investor can login here'
+      );
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new ApiError(401, 'Invalid credentials');
+    }
+
+    const token = jwt.sign(
+      {
+        id: user._id,
+        email: user.email,
+        role: user.role,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '1d' }
+    );
+
+    const { password: _, ...safeUser } = user.toObject();
+
+    return {
+      token,
+      user: {
+        id: safeUser._id,
+        email: safeUser.email,
+        role: safeUser.role,
+        firstName: safeUser.firstName,
+        lastName: safeUser.lastName,
+        phone: safeUser.phone,
       },
     };
   }

@@ -11,7 +11,10 @@ const router = express.Router();
 //...... ADMIN ..........//
 
 router.post('/register', validate(registerSchema), authController.register);
-router.post('/admin-login', authController.adminLogin); // Admin login by email/phone
+router.post('/admin-login', authController.adminLogin);
+
+//...... Investor ..........//
+router.post('/premium-investor-login', authController.premiumInvestorLogin);
 
 router.get(
   '/admin/me',

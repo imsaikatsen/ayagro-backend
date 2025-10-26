@@ -29,6 +29,22 @@ class AuthController {
     }
   }
 
+  async premiumInvestorLogin(req, res, next) {
+    try {
+      const { identifier, password } = req.body;
+      const result = await authService.premiumInvestorLogin(
+        identifier,
+        password
+      );
+      res.status(200).json({
+        message: 'Premium Investor login successful',
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getCurrentAdmin(req, res, next) {
     try {
       const user = await authService.getCurrentUser(req.user.id);
