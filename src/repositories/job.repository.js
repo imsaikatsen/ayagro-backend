@@ -12,7 +12,7 @@ class JobRepository {
       .skip(skip)
       .limit(limit);
     const total = await Job.countDocuments();
-    return { jobs, total, page, pages: Math.ceil(total / limit) };
+    return { jobs, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
   async findById(id) {

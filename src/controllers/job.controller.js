@@ -15,7 +15,17 @@ class JobController {
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 10;
       const jobs = await jobService.getAllJobs(page, limit);
-      res.status(200).json({ message: 'Jobs fetched', data: jobs });
+      // res.status(200).json({ message: 'Jobs fetched', data: jobs });
+      res.status(200).json({
+        message: 'Jobs fetched',
+        data: {
+          jobs: jobs.jobs,
+          total: jobs.total,
+          page: jobs.page,
+          limit: jobs.limit,
+          totalPages: jobs.totalPages,
+        },
+      });
     } catch (err) {
       next(err);
     }
