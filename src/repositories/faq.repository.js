@@ -5,8 +5,25 @@ class FaqRepository {
     return await Faq.create(data);
   }
 
-  async findAll() {
-    return await Faq.find();
+  // async findAll() {
+  //   return await Faq.find();
+  // }
+
+  async findAll(page = 1, limit = 10) {
+    const skip = (page - 1) * limit;
+
+    const [faqs, total] = await Promise.all([
+      Faq.find().sort({ createdAt: -1 }).skip(skip).limit(limit),
+      Faq.countDocuments(),
+    ]);
+
+    return {
+      faqs,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async findById(id) {

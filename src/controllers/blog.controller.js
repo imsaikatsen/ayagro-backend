@@ -17,7 +17,16 @@ class BlogController {
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 10;
       const blogs = await blogService.getAllBlogs(page, limit);
-      res.status(200).json({ message: 'Blogs fetched', data: blogs });
+      res.status(200).json({
+        message: 'Blogs fetched',
+        data: {
+          blogs: blogs.blogs,
+          total: blogs.total,
+          page: blogs.page,
+          limit: blogs.limit,
+          totalPages: blogs.totalPages,
+        },
+      });
     } catch (err) {
       next(err);
     }
