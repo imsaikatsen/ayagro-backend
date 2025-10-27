@@ -23,7 +23,12 @@ router.post(
 router.get(
   '/',
   authMiddleware.authenticate,
-  authMiddleware.authorizeRoles('admin', 'super_admin', 'manager'),
+  authMiddleware.authorizeRoles(
+    'admin',
+    'super_admin',
+    'manager',
+    'premium_investor'
+  ),
   farmerController.getAll
 );
 
