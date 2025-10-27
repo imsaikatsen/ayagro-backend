@@ -16,7 +16,8 @@ class BlogRepository {
       .skip(skip)
       .limit(limit);
     const total = await Blog.countDocuments();
-    return { blogs, total, page, pages: Math.ceil(total / limit) };
+    // return { blogs, total, page, pages: Math.ceil(total / limit) };
+    return { blogs, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
   async updateById(id, updateData) {
