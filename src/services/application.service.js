@@ -9,9 +9,12 @@ class ApplicationService {
     return await applicationRepository.findByJobId(jobId);
   }
 
-  async getAllApplications() {
-    // populate job info (title, department) if needed
-    return await applicationRepository.findAll();
+  // async getAllApplications() {
+  //   // populate job info (title, department) if needed
+  //   return await applicationRepository.findAll();
+  // }
+  async getAllApplications(page, limit) {
+    return await applicationRepository.findAll(page, limit);
   }
 }
 
