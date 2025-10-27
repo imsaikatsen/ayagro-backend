@@ -6,8 +6,12 @@ class FaqService {
     return await faqRepository.create(data);
   }
 
-  async getAllFaqs() {
-    return await faqRepository.findAll();
+  // async getAllFaqs() {
+  //   return await faqRepository.findAll();
+  // }
+
+  async getAllFaqs(page, limit) {
+    return await faqRepository.findAll(page, limit);
   }
 
   async getFaqById(id) {

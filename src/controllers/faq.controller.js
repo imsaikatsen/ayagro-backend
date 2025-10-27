@@ -10,10 +10,32 @@ class FaqController {
     }
   }
 
+  // async getAll(req, res, next) {
+  //   try {
+  //     const faqs = await faqService.getAllFaqs();
+  //     res.status(200).json({ message: 'FAQs fetched', data: faqs });
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // }
+
   async getAll(req, res, next) {
     try {
-      const faqs = await faqService.getAllFaqs();
-      res.status(200).json({ message: 'FAQs fetched', data: faqs });
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+
+      const faqs = await faqService.getAllFaqs(page, limit);
+
+      res.status(200).json({
+        message: 'FAQs fetched',
+        data: {
+          faqs: faqs.faqs,
+          total: faqs.total,
+          page: faqs.page,
+          limit: faqs.limit,
+          totalPages: faqs.totalPages,
+        },
+      });
     } catch (error) {
       next(error);
     }
