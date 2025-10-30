@@ -1,4 +1,6 @@
 const orderItemService = require('../services/order-items.service');
+const OrderItem = require('../models/order-items.model');
+const Order = require('../models/order.model');
 
 class OrderItemController {
   async create(req, res, next) {
@@ -45,12 +47,91 @@ class OrderItemController {
     }
   }
 
+  async getByOrderId(req, res, next) {
+    try {
+      const items = await orderItemService.getByOrderId(req.params.orderId);
+      res.status(200).json({ message: 'Fetched successfully', data: items });
+    } catch (err) {
+      next(err);
+    }
+  }
+
   async delete(req, res, next) {
     try {
       await orderItemService.deleteById(req.params.id);
       res.status(200).json({ message: 'Deleted successfully' });
     } catch (err) {
       next(err);
+    }
+  }
+  async updateOrderItemStatus(req, res) {
+    try {
+      const { paymentStatus, orderStatus } = req.body;
+      const item = await OrderItem.findById(req.params.id);
+
+      if (!item) return res.status(404).json({ message: 'Item not found' });
+
+      if (paymentStatus) item.paymentStatus = paymentStatus;
+      if (orderStatus) item.orderStatus = orderStatus;
+
+      await item.save();
+
+      res.json({ message: 'Item updated successfully', data: item });
+    } catch (err) {
+      res
+        .status(500)
+        .json({ message: 'Something went wrong', error: err.message });
+    }
+  }
+
+  async getByOrderIdGrouped(req, res) {
+    try {
+      const { orderId } = req.params;
+
+      // Fetch the order
+      const order = await Order.findById(orderId);
+      if (!order) {
+        return res
+          .status(404)
+          .json({ success: false, message: 'Order not found' });
+      }
+
+      // Fetch order items using the correct field and populate product
+      const items = await OrderItem.find({ order_id: orderId }).populate(
+        'product_id'
+      );
+
+      // Map to the desired format
+      const response = {
+        message: 'Fetched successfully',
+        data: [
+          {
+            total_orders: {
+              _id: order._id,
+              orderNumber: order.orderNumber,
+              user_id: order.user_id,
+              totalAmount: order.totalAmount,
+              paymentStatus: order.paymentStatus,
+              orderStatus: order.orderStatus,
+            },
+            items: items.map((item) => ({
+              _id: item._id,
+              quantity: item.quantity,
+              price: item.price,
+              product: item.product_id,
+            })),
+          },
+        ],
+      };
+
+      return res.json(response);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        success: false,
+        message: 'Server Error',
+        error: error.message,
+      });
     }
   }
 }

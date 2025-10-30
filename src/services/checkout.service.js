@@ -196,7 +196,7 @@ class checkoutService {
   //   };
   // }
 
-  async getUserOrders(userId, page, limit) {
+  async getUserOrders(userId, page, limit, status) {
     const skip = (page - 1) * limit;
 
     const [orders, total] = await Promise.all([
@@ -325,9 +325,14 @@ class checkoutService {
       });
     }
 
+    let filteredData = result;
+    if (status) {
+      filteredData = result.filter((order) => order.farmStatus === status);
+    }
+
     return {
       summary,
-      data: result,
+      data: filteredData,
       pagination: {
         totalOrders: total,
         currentPage: page,

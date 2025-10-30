@@ -29,6 +29,14 @@ class OrderRepository {
     });
   }
 
+  async updatePaymentStatus(orderId, status) {
+    return await Order.findByIdAndUpdate(
+      orderId,
+      { paymentStatus: status },
+      { new: true }
+    );
+  }
+
   async findById(orderId) {
     return await Order.findById(orderId).populate({
       path: 'user_id',
