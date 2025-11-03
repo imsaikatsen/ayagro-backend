@@ -20,6 +20,19 @@ const orderItemSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    paymentStatus: {
+      type: String,
+      enum: ['Unpaid', 'Paid', 'Partially Paid'],
+      default: 'Unpaid',
+    },
+    orderStatus: {
+      type: String,
+      enum: ['booked', 'active', 'completed', 'cancelled'],
+      default: 'booked',
+    },
+    transactionId: { type: String, default: null },
+    activationDate: { type: Date, default: null },
+    maturityDate: { type: Date, default: null },
   },
   { timestamps: true }
 );

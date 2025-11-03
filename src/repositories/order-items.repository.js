@@ -17,7 +17,7 @@ class OrderItemRepository {
     return await OrderItem.findByIdAndUpdate(id, updateData, {
       new: true,
       runValidators: true,
-    });
+    }).populate('order_id product_id');
   }
 
   async deleteById(id) {
@@ -25,7 +25,9 @@ class OrderItemRepository {
   }
 
   async findByOrderId(orderId) {
-    return await OrderItem.find({ order_id: orderId }).populate('product_id');
+    return await OrderItem.find({ order_id: orderId })
+      .populate('product_id')
+      .populate('order_id');
   }
 }
 
