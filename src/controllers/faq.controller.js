@@ -28,8 +28,8 @@ class FaqController {
 
       res.status(200).json({
         message: 'FAQs fetched',
-        data: {
-          faqs: faqs.faqs,
+        data: faqs.faqs,
+        meta: {
           total: faqs.total,
           page: faqs.page,
           limit: faqs.limit,
