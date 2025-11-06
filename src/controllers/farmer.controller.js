@@ -1,4 +1,5 @@
 const farmerService = require('../services/farmer.service');
+const Product = require('../models/product.model');
 
 class FarmerController {
   async create(req, res, next) {
@@ -14,6 +15,18 @@ class FarmerController {
 
       // Add reference to the logged-in user
       farmerData.addedBy = req.user.id;
+      // ✅  validate projectIds before save
+      if (farmerData.projectIds && farmerData.projectIds.length > 0) {
+        const validProjects = await Product.find({
+          _id: { $in: farmerData.projectIds },
+        });
+
+        if (validProjects.length !== farmerData.projectIds.length) {
+          return res.status(400).json({
+            message: 'Some selected projects do not exist or are inactive.',
+          });
+        }
+      }
 
       const farmer = await farmerService.createFarmer(farmerData);
       res.status(201).json({ message: 'Farmer created', data: farmer });

@@ -18,6 +18,8 @@ router.post(
 );
 
 router.get('/', productController.getAll);
+router.get('/dropdown', productController.getForDropdown);
+
 router.get('/:id', productController.getById);
 router.put(
   '/:id',

@@ -97,6 +97,19 @@ class ProductController {
       next(error);
     }
   }
+
+  async getForDropdown(req, res, next) {
+    try {
+      // Only live products, minimal fields for dropdown
+      const products = await productService.getLiveForDropdown();
+      res.status(200).json({
+        message: 'Projects fetched for dropdown successfully',
+        data: products,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = new ProductController();

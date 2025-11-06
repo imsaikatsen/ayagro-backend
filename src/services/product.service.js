@@ -150,6 +150,21 @@ class ProductService {
 
     return;
   }
+
+  async getLiveForDropdown() {
+    const products = await productRepository.findAll({
+      status: 'live',
+      isActive: true,
+    });
+
+    // Only return essential fields
+    return products.map((p) => ({
+      _id: p._id,
+      name: p.name,
+      duration: p.duration,
+      location: p.location,
+    }));
+  }
 }
 
 module.exports = new ProductService();
