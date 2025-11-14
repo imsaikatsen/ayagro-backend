@@ -319,6 +319,40 @@ class OrderService {
       totalPages: Math.ceil(total / limit),
     };
   }
+
+  async recalcParentOrder(orderId) {
+    const items = await OrderItem.find({ order_id: orderId });
+
+    const totalItems = items.length;
+    const paidItems = items.filter((i) => i.paymentStatus === 'Paid').length;
+    const activeItems = items.filter((i) => i.orderStatus === 'active').length;
+    const completedItems = items.filter(
+      (i) => i.orderStatus === 'completed'
+    ).length;
+    const cancelledItems = items.filter(
+      (i) => i.orderStatus === 'cancelled'
+    ).length;
+    const bookedItems = items.filter((i) => i.orderStatus === 'booked').length;
+
+    // ----- PAYMENT STATUS -----
+    let paymentStatus = 'Unpaid';
+    if (paidItems === totalItems) paymentStatus = 'Paid';
+    else if (paidItems > 0) paymentStatus = 'Partially Paid';
+
+    // ----- ORDER STATUS -----
+    let orderStatus = 'booked';
+    if (completedItems === totalItems) orderStatus = 'completed';
+    else if (cancelledItems === totalItems) orderStatus = 'cancelled';
+    else if (activeItems === totalItems) orderStatus = 'active';
+    else if (activeItems > 0 && bookedItems > 0)
+      orderStatus = 'partially active';
+    else if (activeItems > 0) orderStatus = 'active';
+    else if (bookedItems > 0) orderStatus = 'booked';
+
+    await Order.findByIdAndUpdate(orderId, { paymentStatus, orderStatus });
+
+    return { paymentStatus, orderStatus };
+  }
 }
 
 module.exports = new OrderService();
