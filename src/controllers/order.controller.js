@@ -19,6 +19,14 @@ class OrderController {
   async getAll(req, res, next) {
     try {
       const result = await orderService.getPaginatedOrders(req.query);
+
+      // Recalculate parent order statuses for all orders in the list
+      for (const order of result.orders) {
+        const recalculated = await orderService.recalcParentOrder(order._id);
+        order.paymentStatus = recalculated.paymentStatus;
+        order.orderStatus = recalculated.orderStatus;
+      }
+
       res.status(200).json({
         message: 'Orders fetched successfully',
         ...result,

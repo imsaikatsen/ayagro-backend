@@ -46,7 +46,7 @@ router.delete(
 router.patch(
   '/:id/status',
   authMiddleware.authenticate,
-  authMiddleware.authorizeRoles('admin'),
+  authMiddleware.authorizeRoles('admin', 'super_admin'),
   orderItemsController.updateOrderItemStatus // controller function we added
 );
 
@@ -57,5 +57,3 @@ router.get(
 );
 
 module.exports = router;
-
-//orderController

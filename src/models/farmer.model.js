@@ -12,24 +12,26 @@ const farmerSchema = new mongoose.Schema(
     name: { type: String, required: true },
     address: {
       village: { type: String, required: true },
-      post: { type: String, required: true },
+      post: { type: String, required: false },
       police_station: { type: String, required: true },
       district: { type: String, required: true },
     },
-    phone: { type: String, required: true },
+    phone: { type: String, required: false },
 
     // Farm Details
-    landSize: { type: Number },
+    landSize: { type: Number, required: false },
     crops: { type: String },
 
     // Loan Info
     loanAmount: { type: Number },
-    loanDuration: { type: Number }, // months
+    loanDuration: { type: Number },
     interestRate: { type: Number },
 
+    nid: { type: String, required: true },
+
     // Documents
-    idProof: { type: String },
-    landDeed: { type: String },
+    idProof: { type: String, required: false },
+    landDeed: { type: String, required: false },
 
     // Track who added this farmer
     addedBy: {
