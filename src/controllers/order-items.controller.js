@@ -85,60 +85,6 @@ class OrderItemController {
     }
   }
 
-  // async getByOrderIdGrouped(req, res) {
-  //   try {
-  //     const { orderId } = req.params;
-
-  //     const order = await Order.findById(orderId);
-  //     if (!order) {
-  //       return res.status(404).json({
-  //         success: false,
-  //         message: 'Order not found',
-  //       });
-  //     }
-
-  //     const items = await OrderItem.find({ order_id: orderId }).populate(
-  //       'product_id'
-  //     );
-
-  //     const response = {
-  //       message: 'Fetched successfully',
-  //       data: [
-  //         {
-  //           total_orders: {
-  //             _id: order._id,
-  //             orderNumber: order.orderNumber,
-  //             user_id: order.user_id,
-  //             totalAmount: order.totalAmount,
-  //             paymentStatus: order.paymentStatus,
-  //             orderStatus: order.orderStatus,
-  //           },
-  //           items: items.map((item) => ({
-  //             _id: item._id,
-  //             quantity: item.quantity,
-  //             price: item.price,
-  //             paymentStatus: item.paymentStatus,
-  //             orderStatus: item.orderStatus,
-  //             transactionId: item.transactionId,
-  //             activationDate: item.activationDate,
-  //             maturityDate: item.maturityDate,
-  //             product: item.product_id,
-  //           })),
-  //         },
-  //       ],
-  //     };
-
-  //     return res.json(response);
-  //   } catch (error) {
-  //     console.error(error);
-  //     return res.status(500).json({
-  //       success: false,
-  //       message: 'Server Error',
-  //       error: error.message,
-  //     });
-  //   }
-  // }
-
   async getByOrderIdGrouped(req, res) {
     try {
       const { orderId } = req.params;

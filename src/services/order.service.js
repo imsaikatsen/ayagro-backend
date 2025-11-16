@@ -40,55 +40,6 @@ class OrderService {
     };
   }
 
-  // async updateOrderById(orderId, updateData) {
-  //   const updated = await orderRepository.updateById(orderId, updateData);
-  //   if (!updated) throw new ApiError(500, 'Failed to update order');
-  //   return updated;
-  // }
-
-  // async updateOrderById(orderId, updateData) {
-  //   const existingOrder = await orderRepository.findById(orderId);
-
-  //   if (!existingOrder) throw new ApiError(404, 'Order not found');
-
-  //   // Only set activationDate if status changes from booked → active
-  //   if (
-  //     existingOrder.orderStatus === 'booked' &&
-  //     updateData.orderStatus === 'active'
-  //   ) {
-  //     updateData.activationDate = new Date();
-  //   }
-
-  //   // Handle profit disbursement toggle
-  //   if (updateData.hasOwnProperty('profitDisbursed')) {
-  //     if (
-  //       existingOrder.orderStatus !== 'completed' ||
-  //       existingOrder.paymentStatus !== 'Paid'
-  //     ) {
-  //       throw new ApiError(
-  //         400,
-  //         'Profit can only be disbursed if order is completed and payment is paid'
-  //       );
-  //     }
-
-  //     if (
-  //       updateData.profitDisbursed === true &&
-  //       !existingOrder.profitDisbursed
-  //     ) {
-  //       updateData.profitDisbursedAt = new Date();
-  //     } else if (
-  //       updateData.profitDisbursed === false &&
-  //       existingOrder.profitDisbursed
-  //     ) {
-  //       updateData.profitDisbursedAt = null; // optional, if toggling back
-  //     }
-  //   }
-
-  //   const updated = await orderRepository.updateById(orderId, updateData);
-  //   if (!updated) throw new ApiError(500, 'Failed to update order');
-  //   return updated;
-  // }
-
   async updateOrderById(orderId, updateData) {
     const existingOrder = await orderRepository.findById(orderId);
     if (!existingOrder) throw new ApiError(404, 'Order not found');
@@ -122,14 +73,6 @@ class OrderService {
     if (!deleted) throw new ApiError(500, 'Failed to delete order');
     return;
   }
-
-  // async attachProof(orderId, filename) {
-  //   return await Order.findByIdAndUpdate(
-  //     orderId,
-  //     { proofOfPayment: filename },
-  //     { new: true }
-  //   );
-  // }
 
   async attachProof(orderId, filename) {
     const order = await Order.findByIdAndUpdate(

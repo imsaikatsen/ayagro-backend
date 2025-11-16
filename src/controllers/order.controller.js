@@ -16,18 +16,6 @@ class OrderController {
     }
   }
 
-  // async getAll(req, res, next) {
-  //   try {
-  //     const result = await orderService.getPaginatedOrders(req.query);
-  //     res.status(200).json({
-  //       message: 'Orders fetched successfully',
-  //       ...result,
-  //     });
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // }
-
   async getAll(req, res, next) {
     try {
       const result = await orderService.getPaginatedOrders(req.query);
