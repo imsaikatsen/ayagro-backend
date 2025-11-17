@@ -9,6 +9,15 @@ function formatPhone(phone) {
   return phone;
 }
 
+function generateOtp(length = 6) {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+// Get OTP expiry time
+function getExpiry(minutes = 5) {
+  return new Date(Date.now() + minutes * 60000);
+}
+
 // Send OTP via Email
 async function sendOtpToEmail(email, otp) {
   const transporter = nodemailer.createTransport({
@@ -67,4 +76,6 @@ async function sendOtpToPhone(phone, otp) {
 module.exports = {
   sendOtpToEmail,
   sendOtpToPhone,
+  generateOtp,
+  getExpiry,
 };
