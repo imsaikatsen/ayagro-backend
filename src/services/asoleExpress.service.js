@@ -15,7 +15,7 @@ class AsoleExpressService {
 
     await sendSMS(
       created.phone,
-      `Your OTP for Asole Express verification is ${otp}`
+      `Your OTP for Asol Express verification is ${otp}`
     );
     return created;
   }
