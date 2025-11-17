@@ -7,7 +7,7 @@ const {
   asoleExpressSchema,
 } = require('../validations/asoleExpress.validation');
 
-// Create (admin only)
+// CRUD routes
 router.post(
   '/',
   authMiddleware.authenticate,
@@ -16,7 +16,6 @@ router.post(
   controller.create
 );
 
-// List & Single
 router.get(
   '/',
   authMiddleware.authenticate,
@@ -30,7 +29,6 @@ router.get(
   controller.getById
 );
 
-// Update (admin only)
 router.put(
   '/:id',
   authMiddleware.authenticate,
@@ -39,12 +37,20 @@ router.put(
   controller.update
 );
 
-// Delete (admin only)
 router.delete(
   '/:id',
   authMiddleware.authenticate,
   authMiddleware.authorizeRoles('admin', 'super_admin'),
   controller.delete
 );
+
+// OTP routes
+router.post(
+  '/:id/generate-otp',
+  authMiddleware.authenticate,
+  controller.generateOtp
+);
+router.post('/:id/verify-otp', controller.verifyOtp);
+router.post('/:id/resend-otp', controller.resendOtp);
 
 module.exports = router;
