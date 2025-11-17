@@ -26,6 +26,7 @@ const applicationsRoutes = require('./routes/application.routes');
 const teamRoutes = require('./routes/team.route');
 const partnershipRoutes = require('./routes/partnership.route');
 const investorsRoutes = require('./routes/investor.route');
+const asoleExpressRoutes = require('./routes/asoleExpress.routes');
 
 const app = express();
 
@@ -109,6 +110,7 @@ app.use('/api/v1/applications', applicationsRoutes);
 app.use('/api/v1/teams', teamRoutes);
 app.use('/api/v1/partnership', partnershipRoutes);
 app.use('/api/v1/investors', investorsRoutes);
+app.use('/api/v1/asole-express', asoleExpressRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {
