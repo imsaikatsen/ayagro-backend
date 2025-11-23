@@ -64,7 +64,8 @@ class AsoleExpressController {
   async verifyOtp(req, res, next) {
     try {
       const { code } = req.body;
-      const result = await service.verifyOtp(req.params.id, code);
+      const { tempId } = req.params;
+      const result = await service.verifyOtp(tempId, code);
       res.status(200).json(result);
     } catch (err) {
       next(err);

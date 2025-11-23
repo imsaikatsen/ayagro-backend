@@ -50,7 +50,8 @@ router.post(
   authMiddleware.authenticate,
   controller.generateOtp
 );
-router.post('/:id/verify-otp', controller.verifyOtp);
+router.post('/:tempId/verify-otp', controller.verifyOtp);
+
 router.post('/:id/resend-otp', controller.resendOtp);
 
 module.exports = router;
