@@ -5,6 +5,13 @@ const authMiddleware = require('../middlewares/auth.middleware');
 const validate = require('../middlewares/validate.middleware');
 const { investorSchema } = require('../validations/investor.validation');
 
+router.get(
+  '/me',
+  authMiddleware.authenticate,
+  authMiddleware.authorizeRoles('premium_investor'),
+  investorController.getMyProfile
+);
+
 // ✅ Public endpoint - anyone can submit investor info
 router.post('/', validate(investorSchema), investorController.create);
 

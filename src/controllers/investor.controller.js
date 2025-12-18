@@ -1,4 +1,5 @@
 const investorService = require('../services/investor.service');
+const User = require('../models/user.model');
 
 class InvestorController {
   async create(req, res, next) {
@@ -39,6 +40,21 @@ class InvestorController {
     try {
       await investorService.deleteInvestorById(req.params.id);
       res.status(200).json({ message: 'Investor deleted' });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async getMyProfile(req, res, next) {
+    try {
+      const userId = req.user.id; // from JWT
+      const investor = await investorService.getMyProfile(userId);
+
+      res.status(200).json({
+        success: true,
+        message: 'My investor profile fetched',
+        data: investor,
+      });
     } catch (err) {
       next(err);
     }
