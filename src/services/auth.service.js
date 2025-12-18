@@ -3,6 +3,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const userRepository = require('../repositories/user.repository');
+const Investor = require('../models/investor.model');
 const ApiError = require('../utils/apiError');
 const OTP = require('../models/otp.model');
 const { generateOtp, getExpiry } = require('../utils/otp.util');
@@ -27,6 +28,15 @@ class AuthService {
     };
 
     const createdUser = await userRepository.create(userToCreate);
+
+    // Link to existing investor (if any)
+    const existingInvestor = await Investor.findOne({
+      email: createdUser.email,
+    });
+    if (existingInvestor && !existingInvestor.userId) {
+      existingInvestor.userId = createdUser._id;
+      await existingInvestor.save();
+    }
 
     const { password: _, ...safeUser } = createdUser.toObject();
     return safeUser;

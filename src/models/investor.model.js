@@ -2,6 +2,12 @@ const mongoose = require('mongoose');
 
 const investorSchema = new mongoose.Schema(
   {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: false,
+      unique: true, // one investor profile per user
+    },
     name: {
       type: String,
       required: true,
