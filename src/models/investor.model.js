@@ -6,7 +6,7 @@ const investorSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
       required: false,
-      unique: true, // one investor profile per user
+      unique: true,
     },
     name: {
       type: String,
