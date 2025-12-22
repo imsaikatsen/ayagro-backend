@@ -112,7 +112,7 @@ app.use('/api/v1/teams', teamRoutes);
 app.use('/api/v1/partnership', partnershipRoutes);
 app.use('/api/v1/investors', investorsRoutes);
 app.use('/api/v1/asole-express', asoleExpressRoutes);
-app.use('/api/v1/investments', investmentRoutes);
+app.use('/api/v1/investors', investmentRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {
