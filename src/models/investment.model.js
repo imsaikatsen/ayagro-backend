@@ -13,6 +13,16 @@ const investmentSchema = new mongoose.Schema(
     investedAmount: { type: Number, required: true },
     expectedEarning: { type: Number, required: true },
     maturityDate: { type: Date, required: true },
+    bookedDate: {
+      type: Date,
+      required: true,
+    },
+
+    status: {
+      type: String,
+      enum: ['BOOKED', 'ACTIVE', 'MATURED', 'CANCELLED'],
+      default: 'BOOKED',
+    },
   },
   { timestamps: true }
 );
