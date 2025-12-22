@@ -1,5 +1,6 @@
 const investorRepository = require('../repositories/investor.repository');
 const ApiError = require('../utils/apiError');
+const Investment = require('../models/investment.model');
 
 class InvestorService {
   async createInvestor(data) {
@@ -29,7 +30,19 @@ class InvestorService {
       throw new ApiError(404, 'Investor profile not found');
     }
 
-    return investor;
+    const investments = await Investment.find({
+      investorId: investor._id,
+    }).lean();
+
+    return {
+      _id: investor._id,
+      name: investor.name,
+      email: investor.email,
+      phone: investor.phone,
+      profession: investor.profession,
+      userId: investor.userId,
+      investments,
+    };
   }
 }
 
