@@ -1,5 +1,6 @@
 // src/scripts/modules.seed.js
-require('dotenv').config({ path: '../../.env' });
+// require('dotenv').config({ path: '../../.env' });
+require('dotenv').config({ path: '/root/ayagro-backend/.env' });
 const mongoose = require('mongoose');
 const Module = require('../models/module.model');
 
