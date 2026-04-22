@@ -37,14 +37,12 @@ app.use(
     origin: [
       'http://localhost:5173',
       'http://localhost:5174',
-      'https://test.asole.xyz',
-      'http://asole.xyz',
-      'https://asole.xyz',
       'https://ayagro.asia',
       'https://www.ayagro.asia',
+      'https://admin.ayagro.asia',
     ],
     credentials: true,
-  })
+  }),
 );
 app.use(helmet());
 app.use(morgan('dev'));
@@ -58,24 +56,24 @@ app.use((req, res, next) => {
 serveWithCORS(
   app,
   path.join(__dirname, 'uploads/products'),
-  '/uploads/products'
+  '/uploads/products',
 );
 serveWithCORS(
   app,
   path.join(__dirname, 'uploads/categories'),
-  '/uploads/categories'
+  '/uploads/categories',
 );
 
 serveWithCORS(
   app,
   path.join(__dirname, 'uploads/services'),
-  '/uploads/services'
+  '/uploads/services',
 );
 
 serveWithCORS(
   app,
   path.join(__dirname, 'uploads/header-cards'),
-  '/uploads/header-cards'
+  '/uploads/header-cards',
 );
 
 serveWithCORS(app, path.join(__dirname, 'uploads/proofs'), '/uploads/proofs');
