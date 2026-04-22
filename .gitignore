@@ -1,3 +1,9 @@
+# Ignore everything in the src/uploads folder
+src/uploads/*
+
+# Except the placeholder file
+!src/uploads/.gitkeep
+
 node_modules
 # Keep environment variables out of version control
 .env
